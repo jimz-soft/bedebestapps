@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Panitia | BedeBest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],gaming:['Orbitron','sans-serif']},colors:{'brand-dark':'#0a0a0f','brand-card':'#12121c','brand-purple':'#8b5cf6','brand-cyan':'#06b6d4','brand-magenta':'#d946ef','brand-gold':'#e4c76b','brand-gold-dim':'#b8963e'}}}}</script>
+    <style>body{background:#0a0a0f;color:#e4c76b}input,select,textarea{background:#0a0a0f;border:1px solid rgba(255,255,255,.1);border-radius:.75rem;padding:.5rem .75rem;width:100%;color:#e4c76b}</style>
+</head>
+<body class="font-sans text-brand-gold">
+<div class="min-h-screen md:grid md:grid-cols-[240px_1fr]">
+    <aside class="bg-black/40 border-r border-white/10 p-6">
+        <p class="font-gaming text-lg mb-8">BEDEBEST<span class="text-brand-purple">.</span></p>
+        <p class="text-[10px] uppercase text-brand-purple tracking-widest mb-3">Panitia</p>
+        <nav class="space-y-2 text-sm">
+            <a href="#dashboard" class="block text-brand-gold">Dashboard</a>
+            <a href="#event" class="block text-gray-400 hover:text-brand-gold">Event & logo</a>
+            <a href="#grup" class="block text-gray-400 hover:text-brand-gold">4 Grup</a>
+            <a href="#banner" class="block text-gray-400 hover:text-brand-gold">Banner beranda</a>
+            <a href="#peserta" class="block text-gray-400 hover:text-brand-gold">Peserta & kapten</a>
+            <a href="#roster" class="block text-gray-400 hover:text-brand-gold">Pilih roster</a>
+            <a href="#games" class="block text-gray-400 hover:text-brand-gold">Master games</a>
+            <a href="#input-duel" class="block text-gray-400 hover:text-brand-gold">Input mini soccer</a>
+            <a href="#input-mukbang" class="block text-gray-400 hover:text-brand-gold">Input mukbang</a>
+            <a href="halaman_home.html" class="block text-brand-cyan pt-4">Lihat situs publik</a>
+            <a href="halaman_login.html" class="block text-gray-500">Keluar</a>
+        </nav>
+    </aside>
+    <main class="p-6 md:p-10 space-y-12">
+        <section id="dashboard">
+            <h1 class="font-gaming text-2xl mb-6 text-brand-gold">DASHBOARD</h1>
+            <div class="grid sm:grid-cols-4 gap-4">
+                <div class="bg-brand-card rounded-xl p-4"><p class="text-xs text-gray-500">Grup</p><p class="font-gaming text-3xl">4</p></div>
+                <div class="bg-brand-card rounded-xl p-4"><p class="text-xs text-gray-500">Games</p><p class="font-gaming text-3xl">3</p></div>
+                <div class="bg-brand-card rounded-xl p-4"><p class="text-xs text-gray-500">Match live</p><p class="font-gaming text-3xl text-red-400">1</p></div>
+                <div class="bg-brand-card rounded-xl p-4"><p class="text-xs text-gray-500">Match selesai</p><p class="font-gaming text-3xl">2</p></div>
+            </div>
+        </section>
+
+        <section id="event" class="bg-brand-card border border-white/5 rounded-2xl p-6">
+            <h2 class="font-gaming mb-4">EVENT & LOGO</h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div><label class="text-xs text-gray-500">Nama event</label><input value="BedeBest Tournament 2026"></div>
+                <div><label class="text-xs text-gray-500">Tanggal / venue</label><input value="21–22 Okt 2026 · Aula utama"></div>
+                <div><label class="text-xs text-gray-500">Logo event (PNG)</label><input type="file" accept="image/png,image/webp"></div>
+                <div class="flex items-end"><span class="w-14 h-14 rounded-full bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center font-gaming">BB</span></div>
+                <div class="md:col-span-2">
+                    <label class="text-xs text-gray-500">Banner halaman utama</label>
+                    <input id="hero-banner-input" type="file" accept="image/jpeg,image/png,image/webp">
+                    <p class="text-[11px] text-gray-500 mt-2">Ukuran 1920 × 1080 px (rasio 16:9). JPG, PNG, atau WebP. Hanya panitia yang bisa mengganti. Foto ini menjadi latar hero di beranda.</p>
+                    <div id="hero-banner-preview" class="mt-3 h-32 rounded-xl border border-brand-gold/40 bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2070&auto=format&fit=crop')"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="grup" class="bg-brand-card border border-white/5 rounded-2xl p-6">
+            <h2 class="font-gaming mb-4">EMPAT GRUP + AKUN PIC</h2>
+            <table class="w-full text-sm">
+                <thead class="text-xs uppercase text-gray-500"><tr><th class="text-left py-2">Grup</th><th>Username PIC</th><th></th></tr></thead>
+                <tbody>
+                    <tr class="border-t border-white/5"><td class="py-3">Achilles</td><td class="text-center text-gray-400">pic.achilles</td><td class="text-right text-brand-cyan">Reset password</td></tr>
+                    <tr class="border-t border-white/5"><td class="py-3">Odysseus</td><td class="text-center text-gray-400">pic.odysseus</td><td class="text-right text-brand-cyan">Reset password</td></tr>
+                    <tr class="border-t border-white/5"><td class="py-3">Hercules</td><td class="text-center text-gray-400">pic.hercules</td><td class="text-right text-brand-cyan">Reset password</td></tr>
+                    <tr class="border-t border-white/5"><td class="py-3">Perseus</td><td class="text-center text-gray-400">pic.perseus</td><td class="text-right text-brand-cyan">Reset password</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="banner" class="bg-brand-card border border-white/5 rounded-2xl p-6">
+            <h2 class="font-gaming mb-2">BANNER GRUP DI BERANDA</h2>
+            <p class="text-xs text-gray-500 mb-5">Empat foto ini tampil di halaman utama, tepat di atas papan skor. Hanya panitia yang bisa mengganti.</p>
+            <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                <div>
+                    <img data-preview="achilles" src="img/team-achilles.jpg" alt="Banner Achilles" class="w-full h-44 object-cover object-top rounded-xl border border-brand-gold/40 mb-3">
+                    <label class="text-xs text-gray-500">Banner Achilles</label>
+                    <input data-team="achilles" type="file" accept="image/jpeg,image/png,image/webp">
+                    <p class="text-[11px] text-gray-500 mt-2">Ukuran 800 × 1067 px (rasio 3:4). JPG, PNG, atau WebP.</p>
+                </div>
+                <div>
+                    <img data-preview="odysseus" src="img/team-odysseus.jpg" alt="Banner Odysseus" class="w-full h-44 object-cover object-top rounded-xl border border-brand-gold/40 mb-3">
+                    <label class="text-xs text-gray-500">Banner Odysseus</label>
+                    <input data-team="odysseus" type="file" accept="image/jpeg,image/png,image/webp">
+                    <p class="text-[11px] text-gray-500 mt-2">Ukuran 800 × 1067 px (rasio 3:4). JPG, PNG, atau WebP.</p>
+                </div>
+                <div>
+                    <img data-preview="hercules" src="img/team-hercules.jpg" alt="Banner Hercules" class="w-full h-44 object-cover object-top rounded-xl border border-brand-gold/40 mb-3">
+                    <label class="text-xs text-gray-500">Banner Hercules</label>
+                    <input data-team="hercules" type="file" accept="image/jpeg,image/png,image/webp">
+                    <p class="text-[11px] text-gray-500 mt-2">Ukuran 800 × 1067 px (rasio 3:4). JPG, PNG, atau WebP.</p>
+                </div>
+                <div>
+                    <img data-preview="perseus" src="img/team-perseus.jpg" alt="Banner Perseus" class="w-full h-44 object-cover object-top rounded-xl border border-brand-gold/40 mb-3">
+                    <label class="text-xs text-gray-500">Banner Perseus</label>
+                    <input data-team="perseus" type="file" accept="image/jpeg,image/png,image/webp">
+                    <p class="text-[11px] text-gray-500 mt-2">Ukuran 800 × 1067 px (rasio 3:4). JPG, PNG, atau WebP.</p>
+                </div>
+            </div>
+            <p class="text-[11px] text-gray-500 mt-4">File tersimpan di browser ini dan langsung mengganti banner di halaman utama. Akun PIC tidak punya input ini.</p>
+        </section>
+
+        <section id="peserta" class="bg-brand-card border border-white/5 rounded-2xl p-6">
+            <h2 class="font-gaming mb-2">PESERTA & KAPTEN</h2>
+            <p class="text-xs text-gray-500 mb-4">Hanya panitia yang menginput daftar peserta. Satu orang bisa pemain, personil, atau keduanya. Kapten: 1 atau 2 per tim, ditentukan panitia.</p>
+            <div class="mb-4 max-w-xs"><label class="text-xs text-gray-500">Pilih grup</label><select><option>Achilles</option><option>Odysseus</option><option>Hercules</option><option>Perseus</option></select></div>
+            <div class="overflow-x-auto mb-4">
+                <table class="w-full text-sm">
+                    <thead class="text-xs uppercase text-gray-500">
+                        <tr><th class="text-left py-2">Nama</th><th class="text-center">Pemain</th><th class="text-center">Personil</th><th class="text-center">Kapten</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-t border-white/5"><td class="py-2">Andika Pratama</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center text-brand-purple">✓ 1</td></tr>
+                        <tr class="border-t border-white/5"><td class="py-2">Sari Wulandari</td><td class="text-center">✓</td><td class="text-center text-gray-600">—</td><td class="text-center text-brand-purple">✓ 2</td></tr>
+                        <tr class="border-t border-white/5"><td class="py-2">Budi Santoso</td><td class="text-center">✓</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td></tr>
+                        <tr class="border-t border-white/5"><td class="py-2">Fajar Nugroho</td><td class="text-center">✓</td><td class="text-center text-gray-600">—</td><td class="text-center text-gray-600">—</td></tr>
+                        <tr class="border-t border-white/5"><td class="py-2">Yoga Mahendra</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center text-gray-600">—</td></tr>
+                        <tr class="border-t border-white/5"><td class="py-2">Rina Kusuma</td><td class="text-center text-gray-600">—</td><td class="text-center">✓</td><td class="text-center text-gray-600">—</td></tr>
+                        <tr class="border-t border-white/5"><td class="py-2">Dewi Lestari</td><td class="text-center text-gray-600">—</td><td class="text-center">✓</td><td class="text-center text-gray-600">—</td></tr>
+                        <tr class="border-t border-white/5"><td class="py-2">Agus Hartono</td><td class="text-center">✓</td><td class="text-center">✓</td><td class="text-center text-gray-600">—</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="grid md:grid-cols-5 gap-3 items-end">
+                <div class="md:col-span-2"><label class="text-xs text-gray-500">Nama peserta baru</label><input placeholder="Nama lengkap"></div>
+                <label class="text-xs text-gray-400 flex items-center gap-2"><input type="checkbox" class="w-4" checked> Pemain</label>
+                <label class="text-xs text-gray-400 flex items-center gap-2"><input type="checkbox" class="w-4"> Personil</label>
+                <label class="text-xs text-gray-400 flex items-center gap-2"><input type="checkbox" class="w-4"> Kapten</label>
+            </div>
+            <button class="mt-4 px-5 py-2 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-sm font-semibold">Tambah peserta</button>
+            <p class="text-[11px] text-gray-600 mt-3">Kapten ketiga tidak bisa dicentang — batas 2. PIC / kapten tidak bisa menambah nama.</p>
+        </section>
+
+        <section id="roster" class="bg-brand-card border border-white/5 rounded-2xl p-6">
+            <h2 class="font-gaming mb-2">PILIH ROSTER (OVERRIDE)</h2>
+            <p class="text-xs text-gray-500 mb-4">Sama seperti akun tim: pilih dari daftar peserta. Panitia bisa mengisi atau menimpa pilihan PIC. Hanya game roster on.</p>
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div><label class="text-xs text-gray-500">Grup</label><select><option>Achilles</option><option>Odysseus</option><option>Hercules</option><option>Perseus</option></select></div>
+                <div><label class="text-xs text-gray-500">Game</label><select><option>Mini Soccer (roster on)</option><option>Voli (roster on)</option><option disabled>Mukbang (roster off)</option></select></div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-2 text-sm mb-4">
+                <label class="flex items-center gap-2 bg-black/20 rounded-lg px-3 py-2"><input type="checkbox" class="w-4" checked> Andika Pratama</label>
+                <label class="flex items-center gap-2 bg-black/20 rounded-lg px-3 py-2"><input type="checkbox" class="w-4" checked> Sari Wulandari</label>
+                <label class="flex items-center gap-2 bg-black/20 rounded-lg px-3 py-2"><input type="checkbox" class="w-4" checked> Budi Santoso</label>
+                <label class="flex items-center gap-2 bg-black/20 rounded-lg px-3 py-2"><input type="checkbox" class="w-4" checked> Fajar Nugroho</label>
+                <label class="flex items-center gap-2 bg-black/20 rounded-lg px-3 py-2"><input type="checkbox" class="w-4" checked> Yoga Mahendra</label>
+                <label class="flex items-center gap-2 bg-black/20 rounded-lg px-3 py-2"><input type="checkbox" class="w-4" checked> Agus Hartono</label>
+            </div>
+            <button class="px-5 py-2 rounded-full bg-white/10 text-sm">Simpan roster Achilles · Mini Soccer</button>
+        </section>
+
+        <section id="games" class="bg-brand-card border border-white/5 rounded-2xl p-6">
+            <h2 class="font-gaming mb-2">MASTER GAMES</h2>
+            <p class="text-xs text-gray-500 mb-4">Tidak ada isian poin juara 1/2/3. Flag <b>perlu roster</b> bisa diubah sesuai kebutuhan — UI pilih skuad mengikuti flag ini.</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="text-xs uppercase text-gray-500"><tr><th class="text-left py-2">Game</th><th>Format</th><th>Perlu roster</th><th>Skor babak</th></tr></thead>
+                    <tbody>
+                        <tr class="border-t border-white/5"><td class="py-3">Mini Soccer</td><td>Head-to-head gugur</td><td><select class="w-auto"><option>On</option><option>Off</option></select></td><td>Babak · akumulasi</td></tr>
+                        <tr class="border-t border-white/5"><td class="py-3">Voli</td><td>Round robin</td><td><select class="w-auto"><option>On</option><option>Off</option></select></td><td>Set</td></tr>
+                        <tr class="border-t border-white/5"><td class="py-3">Mukbang</td><td>Lomba bersama 4 grup</td><td><select class="w-auto"><option>Off</option><option>On</option></select></td><td>—</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="input-duel" class="bg-brand-card border border-white/5 rounded-2xl p-6">
+            <h2 class="font-gaming mb-2">INPUT HASIL — MINI SOCCER LIVE</h2>
+            <p class="text-sm text-gray-400 mb-4">Achilles vs Odysseus · Semifinal</p>
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div><label class="text-xs text-gray-500">Babak 1 Achilles</label><input value="1"></div>
+                <div><label class="text-xs text-gray-500">Babak 1 Odysseus</label><input value="0"></div>
+                <div><label class="text-xs text-gray-500">Babak 2 Achilles</label><input value="1"></div>
+                <div><label class="text-xs text-gray-500">Babak 2 Odysseus</label><input value="1"></div>
+            </div>
+            <p class="text-xs uppercase text-gray-500 mb-2">Poin games per grup (diisi setelah/selama match — bukan dari master)</p>
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div><label class="text-xs text-gray-500">Poin games Achilles</label><input value="10"></div>
+                <div><label class="text-xs text-gray-500">Poin games Odysseus</label><input value="4"></div>
+                <div><label class="text-xs text-gray-500">Poin personil Achilles (total akhir)</label><input value="4"></div>
+                <div><label class="text-xs text-gray-500">Poin personil Odysseus (total akhir)</label><input value="3"></div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div><label class="text-xs text-gray-500">Bonus pemenang (opsional)</label><input value="5"></div>
+                <div><label class="text-xs text-gray-500">Keterangan bonus (wajib jika bonus &gt; 0)</label><input value="Bonus semifinal Mini Soccer"></div>
+            </div>
+            <div class="flex gap-3">
+                <button class="px-5 py-2 rounded-full bg-white/10 text-sm">Simpan live</button>
+                <button class="px-5 py-2 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-sm font-semibold">Flag pertandingan selesai</button>
+            </div>
+        </section>
+
+        <section id="input-mukbang" class="bg-brand-card border border-white/5 rounded-2xl p-6">
+            <h2 class="font-gaming mb-2">INPUT HASIL — MUKBANG 4 GRUP</h2>
+            <p class="text-xs text-gray-500 mb-4">Panitia ketik poin games dan poin personil (total akhir, dihitung sendiri). Aplikasi hanya menjumlahkan.</p>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div><label class="text-xs text-gray-500">Poin games Achilles</label><input value="10"></div>
+                <div><label class="text-xs text-gray-500">Poin personil Achilles</label><input value="5"></div>
+                <div><label class="text-xs text-gray-500">Poin games Odysseus</label><input value="8"></div>
+                <div><label class="text-xs text-gray-500">Poin personil Odysseus</label><input value="4"></div>
+                <div><label class="text-xs text-gray-500">Poin games Hercules</label><input value="12"></div>
+                <div><label class="text-xs text-gray-500">Poin personil Hercules</label><input value="6"></div>
+                <div><label class="text-xs text-gray-500">Poin games Perseus</label><input value="6"></div>
+                <div><label class="text-xs text-gray-500">Poin personil Perseus</label><input value="3"></div>
+            </div>
+            <button class="mt-6 px-5 py-2 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-sm font-semibold">Flag sesi selesai</button>
+        </section>
+        <p class="text-xs text-gray-600"><a href="index.html" class="text-brand-cyan">Index preview</a> · banner halaman utama tersimpan di browser ini. Form lain masih contoh.</p>
+    </main>
+</div>
+<script>
+    function fitImage(file, maxW, maxH) {
+        return new Promise(function (resolve, reject) {
+            const reader = new FileReader();
+            reader.onerror = reject;
+            reader.onload = function () {
+                const image = new Image();
+                image.onload = function () {
+                    const scale = Math.min(maxW / image.width, maxH / image.height, 1);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.round(image.width * scale);
+                    canvas.height = Math.round(image.height * scale);
+                    canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.82));
+                };
+                image.onerror = reject;
+                image.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    const heroPreview = document.getElementById('hero-banner-preview');
+    const savedHero = localStorage.getItem('bedebest.heroBanner');
+    if (savedHero) heroPreview.style.backgroundImage = 'url("' + savedHero + '")';
+
+    document.getElementById('hero-banner-input').addEventListener('change', function () {
+        const file = this.files && this.files[0];
+        if (!file) return;
+        fitImage(file, 1920, 1080).then(function (dataUrl) {
+            localStorage.setItem('bedebest.heroBanner', dataUrl);
+            heroPreview.style.backgroundImage = 'url("' + dataUrl + '")';
+        });
+    });
+
+    document.querySelectorAll('[data-team]').forEach(function (input) {
+        const key = 'bedebest.banner.' + input.dataset.team;
+        const preview = document.querySelector('[data-preview="' + input.dataset.team + '"]');
+        const saved = localStorage.getItem(key);
+        if (saved && preview) preview.src = saved;
+        input.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (!file) return;
+            fitImage(file, 800, 1067).then(function (dataUrl) {
+                localStorage.setItem(key, dataUrl);
+                if (preview) preview.src = dataUrl;
+            });
+        });
+    });
+</script>
+</body>
+</html>
