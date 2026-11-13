@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
+use App\Models\GameGalleryPhoto;
 use App\Models\GameMatch;
 use App\Models\Setting;
 use App\Models\Team;
@@ -29,6 +30,12 @@ class HomeController extends Controller
                 ->get(),
             'standings' => $board->standings(),
             'countdown' => $countdown->current(),
+            'galleryPreview' => GameGalleryPhoto::query()
+                ->with('game')
+                ->whereHas('game', fn ($game) => $game->active())
+                ->orderByDesc('id')
+                ->limit(8)
+                ->get(),
         ]);
     }
 }

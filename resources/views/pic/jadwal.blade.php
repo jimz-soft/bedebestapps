@@ -6,7 +6,8 @@
 <section class="bg-brand-card border border-white/5 rounded-2xl p-6">
     <h1 class="font-gaming text-2xl mb-2">JADWAL</h1>
     <p class="text-xs text-gray-500 mb-6">Jadwal seluruh cabang. Baris grup {{ $team->name }} ditandai.</p>
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full min-w-[640px] text-sm">
         <thead class="text-xs uppercase text-gray-500">
             <tr><th class="text-left py-2">Game</th><th>Babak</th><th>Tim</th><th>Waktu</th><th>Status</th></tr>
         </thead>
@@ -38,5 +39,6 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </section>
 @endsection

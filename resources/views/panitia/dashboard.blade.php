@@ -19,6 +19,7 @@
         <a href="{{ route('panitia.participants.index') }}" class="px-5 py-2 rounded-full bg-white/10 text-sm">Peserta & kapten</a>
         <a href="{{ route('panitia.rosters.edit') }}" class="px-5 py-2 rounded-full bg-white/10 text-sm">Pilih roster</a>
         <a href="{{ route('panitia.scores.index') }}" class="px-5 py-2 rounded-full bg-white/10 text-sm">Skor & poin</a>
+        <a href="{{ route('panitia.gallery.index') }}" class="px-5 py-2 rounded-full bg-white/10 text-sm">Gallery</a>
         <a href="{{ route('panitia.banners.edit') }}" class="px-5 py-2 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-sm font-semibold">Banner halaman utama</a>
     </div>
 </section>

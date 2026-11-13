@@ -34,16 +34,18 @@
     </div>
 
     <div class="bg-brand-card border border-white/5 rounded-2xl p-6">
-        <h2 class="font-gaming mb-4">ROSTER PER GAME</h2>
+        <h2 class="font-gaming mb-4">ROSTER PER PERTANDINGAN</h2>
         <div class="space-y-4">
-            @foreach ($games as $game)
+            @forelse ($matches as $match)
                 <div>
-                    <p class="text-xs text-gray-500 mb-2">{{ $game->name }}</p>
+                    <p class="text-xs text-gray-500 mb-2">{{ $match->rosterLabel() }}</p>
                     <p class="text-sm">
-                        {{ ($rosters->get($game->id) ?? collect())->pluck('participant.name')->filter()->join(', ') ?: 'Belum dipilih' }}
+                        {{ ($rosters->get($match->id) ?? collect())->pluck('participant.name')->filter()->join(', ') ?: 'Belum dipilih' }}
                     </p>
                 </div>
-            @endforeach
+            @empty
+                <p class="text-sm text-gray-500">Belum ada jadwal pertandingan yang memakai roster.</p>
+            @endforelse
         </div>
         <a href="{{ route('pic.rosters.edit') }}" class="inline-block mt-6 text-brand-cyan text-sm">Ubah roster</a>
     </div>

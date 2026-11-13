@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Game;
 use App\Models\GameMatch;
-use App\Models\GameRoster;
+use App\Models\MatchRoster;
 use App\Models\Participant;
 use App\Models\Team;
 use App\Models\User;
@@ -23,6 +23,13 @@ class AdministratorPanelTest extends TestCase
         $this->seed(DatabaseSeeder::class);
         $admin = User::query()->where('username', 'panitia')->firstOrFail();
         $team = Team::query()->firstOrFail();
+
+        $this->actingAs($admin)
+            ->get(route('panitia.dashboard'))
+            ->assertOk()
+            ->assertSee('id="sidebar-toggle"', false)
+            ->assertSee('id="app-sidebar"', false)
+            ->assertSee('Buka menu');
 
         $this->actingAs($admin)
             ->get(route('panitia.users.create'))
@@ -386,6 +393,7 @@ class AdministratorPanelTest extends TestCase
         $this->seed(DatabaseSeeder::class);
         $admin = User::query()->where('username', 'panitia')->firstOrFail();
         $team = Team::query()->where('slug', 'achilles')->firstOrFail();
+        $opponent = Team::query()->where('slug', 'odysseus')->firstOrFail();
         $game = Game::query()->where('slug', 'mini-soccer')->firstOrFail();
         $mukbang = Game::query()->where('slug', 'mukbang')->firstOrFail();
 
@@ -399,37 +407,76 @@ class AdministratorPanelTest extends TestCase
             'name' => 'Budi Santoso',
         ]);
 
+        $this->actingAs($admin)->post(route('panitia.matches.store'), [
+            'game_id' => $game->id,
+            'round_label' => 'Semifinal',
+            'scheduled_at' => '2026-11-21 09:00:00',
+            'location' => 'Lapangan',
+            'status' => 'upcoming',
+            'team_ids' => [$team->id, $opponent->id],
+        ])->assertRedirect();
+
+        $match = GameMatch::query()->where('game_id', $game->id)->firstOrFail();
         $andika = Participant::query()->where('name', 'Andika Pratama')->firstOrFail();
         $budi = Participant::query()->where('name', 'Budi Santoso')->firstOrFail();
 
         $this->actingAs($admin)
-            ->get(route('panitia.rosters.edit', ['game_id' => $game->id, 'team_id' => $team->id]))
+            ->get(route('panitia.rosters.edit', ['game_id' => $game->id, 'match_id' => $match->id, 'team_id' => $team->id]))
             ->assertOk()
             ->assertSee('Pilih roster')
+            ->assertSee('Jadwal pertandingan')
+            ->assertSee('Cari nama peserta')
+            ->assertSee('id="roster-search"', false)
+            ->assertSee('name="game_id"', false)
+            ->assertSee('name="match_id"', false)
+            ->assertSee('name="team_id"', false)
             ->assertSee('Andika Pratama')
             ->assertSee('Budi Santoso')
             ->assertDontSee('Mukbang');
 
         $this->actingAs($admin)->put(route('panitia.rosters.update'), [
-            'game_id' => $game->id,
+            'match_id' => $match->id,
             'team_id' => $team->id,
             'participant_ids' => [$andika->id, $budi->id],
         ])->assertRedirect();
 
-        $this->assertDatabaseHas('game_rosters', [
-            'game_id' => $game->id,
+        $this->assertDatabaseHas('match_rosters', [
+            'match_id' => $match->id,
             'team_id' => $team->id,
             'participant_id' => $andika->id,
         ]);
-        $this->assertSame(2, GameRoster::query()->where('game_id', $game->id)->where('team_id', $team->id)->count());
+        $this->assertSame(2, MatchRoster::query()->where('match_id', $match->id)->where('team_id', $team->id)->count());
 
         $this->actingAs($admin)->from(route('panitia.rosters.edit'))
             ->put(route('panitia.rosters.update'), [
-                'game_id' => $mukbang->id,
+                'match_id' => 999999,
                 'team_id' => $team->id,
                 'participant_ids' => [$andika->id],
             ])
-            ->assertSessionHasErrors('game_id');
+            ->assertSessionHasErrors('match_id');
+
+        $this->actingAs($admin)->post(route('panitia.matches.store'), [
+            'game_id' => $mukbang->id,
+            'round_label' => 'Heat 1',
+            'scheduled_at' => '2026-11-21 18:00:00',
+            'status' => 'upcoming',
+            'team_ids' => Team::query()->orderBy('sort_order')->pluck('id')->all(),
+        ])->assertRedirect();
+
+        $mukbangMatch = GameMatch::query()->where('game_id', $mukbang->id)->firstOrFail();
+
+        $this->actingAs($admin)
+            ->get(route('panitia.rosters.edit'))
+            ->assertOk()
+            ->assertDontSee('Mukbang');
+
+        $this->actingAs($admin)->from(route('panitia.rosters.edit'))
+            ->put(route('panitia.rosters.update'), [
+                'match_id' => $mukbangMatch->id,
+                'team_id' => $team->id,
+                'participant_ids' => [$andika->id],
+            ])
+            ->assertSessionHasErrors('match_id');
     }
 
     public function test_team_user_can_pick_own_roster_only(): void
@@ -449,6 +496,16 @@ class AdministratorPanelTest extends TestCase
             'name' => 'Citra Lestari',
         ]);
 
+        $this->actingAs($admin)->post(route('panitia.matches.store'), [
+            'game_id' => $game->id,
+            'round_label' => 'Semifinal',
+            'scheduled_at' => '2026-11-21 09:00:00',
+            'location' => 'Lapangan',
+            'status' => 'upcoming',
+            'team_ids' => [$achilles->id, $odysseus->id],
+        ])->assertRedirect();
+
+        $match = GameMatch::query()->where('game_id', $game->id)->firstOrFail();
         $andika = Participant::query()->where('name', 'Andika Pratama')->firstOrFail();
         $citra = Participant::query()->where('name', 'Citra Lestari')->firstOrFail();
         $pic = User::factory()->member()->create([
@@ -456,29 +513,32 @@ class AdministratorPanelTest extends TestCase
             'team_id' => $achilles->id,
         ]);
 
-        $this->actingAs($pic)->get(route('pic.rosters.edit'))
+        $this->actingAs($pic)->get(route('pic.rosters.edit', ['game_id' => $game->id, 'match_id' => $match->id]))
             ->assertOk()
+            ->assertSee('Jadwal pertandingan')
+            ->assertSee('name="game_id"', false)
+            ->assertDontSee('>Grup</label>')
             ->assertSee('Andika Pratama')
             ->assertDontSee('Citra Lestari');
 
         $this->actingAs($pic)->put(route('pic.rosters.update'), [
-            'game_id' => $game->id,
+            'match_id' => $match->id,
             'team_id' => $odysseus->id,
             'participant_ids' => [$citra->id],
         ])->assertSessionHasErrors('participant_ids');
 
         $this->actingAs($pic)->put(route('pic.rosters.update'), [
-            'game_id' => $game->id,
+            'match_id' => $match->id,
             'team_id' => $odysseus->id,
             'participant_ids' => [$andika->id],
         ])->assertRedirect();
 
-        $this->assertDatabaseHas('game_rosters', [
-            'game_id' => $game->id,
+        $this->assertDatabaseHas('match_rosters', [
+            'match_id' => $match->id,
             'team_id' => $achilles->id,
             'participant_id' => $andika->id,
         ]);
-        $this->assertDatabaseMissing('game_rosters', [
+        $this->assertDatabaseMissing('match_rosters', [
             'team_id' => $odysseus->id,
             'participant_id' => $citra->id,
         ]);
@@ -495,6 +555,8 @@ class AdministratorPanelTest extends TestCase
             'name' => $game->name,
             'format' => $game->format,
             'requires_roster' => '1',
+            'roster_min' => 1,
+            'roster_max' => 11,
             'uses_period_score' => '1',
             'period_label' => 'Babak',
             'period_count_default' => 2,
@@ -527,6 +589,8 @@ class AdministratorPanelTest extends TestCase
             'name' => $game->name,
             'format' => $game->format,
             'requires_roster' => '1',
+            'roster_min' => 1,
+            'roster_max' => 11,
             'uses_period_score' => '1',
             'period_label' => 'Babak',
             'period_count_default' => 2,
@@ -536,5 +600,130 @@ class AdministratorPanelTest extends TestCase
 
         $this->assertTrue($game->fresh()->is_active);
         $this->get(route('home'))->assertSee('Mini Soccer');
+    }
+
+    public function test_roster_game_can_configure_min_and_max_and_enforces_them(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        $admin = User::query()->where('username', 'panitia')->firstOrFail();
+        $game = Game::query()->where('slug', 'mini-soccer')->firstOrFail();
+        $team = Team::query()->where('slug', 'achilles')->firstOrFail();
+
+        $this->actingAs($admin)->put(route('panitia.games.update', $game), [
+            'name' => $game->name,
+            'format' => $game->format,
+            'requires_roster' => '1',
+            'roster_min' => 2,
+            'roster_max' => 3,
+            'uses_period_score' => '1',
+            'period_label' => 'Babak',
+            'period_count_default' => 2,
+            'score_mode' => 'aggregate',
+            'is_active' => '1',
+        ])->assertRedirect(route('panitia.games.index'));
+
+        $game->refresh();
+        $this->assertSame(2, $game->roster_min);
+        $this->assertSame(3, $game->roster_max);
+
+        $this->actingAs($admin)->get(route('panitia.games.index'))
+            ->assertOk()
+            ->assertSee('On (2–3)');
+
+        foreach (['Andika Pratama', 'Budi Santoso', 'Citra Lestari', 'Dewi Anggraini'] as $name) {
+            $this->actingAs($admin)->post(route('panitia.participants.store'), [
+                'team_id' => $team->id,
+                'name' => $name,
+            ]);
+        }
+
+        $opponent = Team::query()->where('slug', 'odysseus')->firstOrFail();
+        $this->actingAs($admin)->post(route('panitia.matches.store'), [
+            'game_id' => $game->id,
+            'round_label' => 'Semifinal',
+            'scheduled_at' => '2026-11-21 09:00:00',
+            'status' => 'upcoming',
+            'team_ids' => [$team->id, $opponent->id],
+        ])->assertRedirect();
+
+        $match = GameMatch::query()->where('game_id', $game->id)->firstOrFail();
+        $ids = Participant::query()->where('team_id', $team->id)->orderBy('id')->pluck('id');
+
+        $this->actingAs($admin)
+            ->get(route('panitia.rosters.edit', ['match_id' => $match->id, 'team_id' => $team->id]))
+            ->assertOk()
+            ->assertSee('minimum 2')
+            ->assertSee('maximum 3')
+            ->assertSee('data-min="2"', false)
+            ->assertSee('data-max="3"', false)
+            ->assertSee('Jumlah dipilih harus di dalam rentang itu');
+
+        $this->actingAs($admin)->from(route('panitia.rosters.edit', ['match_id' => $match->id, 'team_id' => $team->id]))
+            ->put(route('panitia.rosters.update'), [
+                'match_id' => $match->id,
+                'team_id' => $team->id,
+                'participant_ids' => [$ids[0]],
+            ])
+            ->assertSessionHasErrors('participant_ids');
+
+        $this->actingAs($admin)->from(route('panitia.rosters.edit', ['match_id' => $match->id, 'team_id' => $team->id]))
+            ->put(route('panitia.rosters.update'), [
+                'match_id' => $match->id,
+                'team_id' => $team->id,
+                'participant_ids' => $ids->take(4)->all(),
+            ])
+            ->assertSessionHasErrors('participant_ids');
+
+        $this->actingAs($admin)->put(route('panitia.rosters.update'), [
+            'match_id' => $match->id,
+            'team_id' => $team->id,
+            'participant_ids' => $ids->take(2)->all(),
+        ])->assertRedirect();
+
+        $this->assertSame(2, MatchRoster::query()->where('match_id', $match->id)->where('team_id', $team->id)->count());
+    }
+
+    public function test_administrator_can_bulk_add_and_import_participants(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        $admin = User::query()->where('username', 'panitia')->firstOrFail();
+        $team = Team::query()->where('slug', 'achilles')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->get(route('panitia.participants.index', ['team_id' => $team->id]))
+            ->assertOk()
+            ->assertSee('Nama peserta (bisa banyak sekaligus)')
+            ->assertSee('import dari file');
+
+        $this->actingAs($admin)->post(route('panitia.participants.store'), [
+            'team_id' => $team->id,
+            'names' => "Andika Pratama\nBudi Santoso\nCitra Lestari\nAndika Pratama",
+        ])->assertRedirect(route('panitia.participants.index', ['team_id' => $team->id]));
+
+        $this->assertSame(3, Participant::query()->where('team_id', $team->id)->count());
+        $this->assertDatabaseHas('participants', [
+            'team_id' => $team->id,
+            'name' => 'Andika Pratama',
+        ]);
+
+        $csv = UploadedFile::fake()->createWithContent(
+            'peserta.csv',
+            "Nama\nDewi Anggraini\nEko Saputra\nBudi Santoso\n"
+        );
+
+        $this->actingAs($admin)->post(route('panitia.participants.store'), [
+            'team_id' => $team->id,
+            'import_file' => $csv,
+        ])->assertRedirect(route('panitia.participants.index', ['team_id' => $team->id]));
+
+        $this->assertSame(5, Participant::query()->where('team_id', $team->id)->count());
+        $this->assertDatabaseHas('participants', [
+            'team_id' => $team->id,
+            'name' => 'Dewi Anggraini',
+        ]);
+        $this->assertDatabaseHas('participants', [
+            'team_id' => $team->id,
+            'name' => 'Eko Saputra',
+        ]);
     }
 }

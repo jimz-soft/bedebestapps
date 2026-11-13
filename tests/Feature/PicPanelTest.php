@@ -4,12 +4,13 @@ namespace Tests\Feature;
 
 use App\Models\Game;
 use App\Models\GameMatch;
-use App\Models\GameRoster;
+use App\Models\MatchRoster;
 use App\Models\Participant;
 use App\Models\Team;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class PicPanelTest extends TestCase
@@ -57,6 +58,7 @@ class PicPanelTest extends TestCase
 
         $this->actingAs($pic)->get(route('pic.jadwal'))
             ->assertOk()
+            ->assertSee('id="sidebar-toggle"', false)
             ->assertSee('Jadwal')
             ->assertSee('Profil tim')
             ->assertSee('Pilih roster')
@@ -79,8 +81,9 @@ class PicPanelTest extends TestCase
         $this->actingAs($admin)->get(route('pic.jadwal'))->assertForbidden();
     }
 
-    public function test_roster_stays_editable_until_all_matches_for_that_game_are_finished(): void
+    public function test_roster_locks_per_finished_match_only(): void
     {
+        Carbon::setTestNow(Carbon::parse('2026-11-19 10:00:00', 'Asia/Jakarta'));
         [$admin, $pic, $achilles, $odysseus, $game] = $this->seedPicContext();
 
         $this->actingAs($admin)->post(route('panitia.participants.store'), [
@@ -107,60 +110,121 @@ class PicPanelTest extends TestCase
             'team_ids' => [$achilles->id, $odysseus->id],
         ])->assertRedirect();
 
-        $this->actingAs($pic)->get(route('pic.rosters.edit', ['game_id' => $game->id]))
-            ->assertOk()
-            ->assertSee('Andika Pratama')
-            ->assertSee('Bisa diubah selama pertandingan')
-            ->assertDontSee('Roster terkunci');
-
-        $this->actingAs($pic)->put(route('pic.rosters.update'), [
-            'game_id' => $game->id,
-            'participant_ids' => [$andika->id],
-        ])->assertRedirect();
-
-        $this->assertDatabaseHas('game_rosters', [
-            'game_id' => $game->id,
-            'team_id' => $achilles->id,
-            'participant_id' => $andika->id,
-        ]);
-
         $first = GameMatch::query()->orderBy('id')->firstOrFail();
         $second = GameMatch::query()->orderByDesc('id')->firstOrFail();
 
-        $this->actingAs($admin)->post(route('panitia.scores.finish', $first))->assertRedirect();
-
-        $this->actingAs($pic)->from(route('pic.rosters.edit', ['game_id' => $game->id]))
-            ->put(route('pic.rosters.update'), [
-                'game_id' => $game->id,
-                'participant_ids' => [],
-            ])
-            ->assertRedirect();
-
-        $this->assertSame(0, GameRoster::query()->where('game_id', $game->id)->where('team_id', $achilles->id)->count());
+        $this->actingAs($pic)->get(route('pic.rosters.edit', ['match_id' => $first->id]))
+            ->assertOk()
+            ->assertSee('Andika Pratama')
+            ->assertSee('per pertandingan')
+            ->assertSee('Countdown batas input roster')
+            ->assertDontSee('Roster terkunci');
 
         $this->actingAs($pic)->put(route('pic.rosters.update'), [
-            'game_id' => $game->id,
+            'match_id' => $first->id,
             'participant_ids' => [$andika->id],
         ])->assertRedirect();
 
-        $this->actingAs($admin)->post(route('panitia.scores.finish', $second))->assertRedirect();
-
-        $this->actingAs($pic)->from(route('pic.rosters.edit', ['game_id' => $game->id]))
-            ->put(route('pic.rosters.update'), [
-                'game_id' => $game->id,
-                'participant_ids' => [],
-            ])
-            ->assertSessionHasErrors('participant_ids');
-
-        $this->assertDatabaseHas('game_rosters', [
-            'game_id' => $game->id,
+        $this->assertDatabaseHas('match_rosters', [
+            'match_id' => $first->id,
             'team_id' => $achilles->id,
             'participant_id' => $andika->id,
         ]);
 
-        $this->actingAs($pic)->get(route('pic.rosters.edit', ['game_id' => $game->id]))
+        $this->actingAs($admin)->post(route('panitia.scores.finish', $first))->assertRedirect();
+
+        $this->actingAs($pic)->from(route('pic.rosters.edit', ['match_id' => $first->id]))
+            ->put(route('pic.rosters.update'), [
+                'match_id' => $first->id,
+                'participant_ids' => [$andika->id],
+            ])
+            ->assertSessionHasErrors('participant_ids');
+
+        $this->actingAs($pic)->get(route('pic.rosters.edit', ['match_id' => $first->id]))
             ->assertOk()
             ->assertSee('Roster terkunci');
+
+        $this->actingAs($pic)->put(route('pic.rosters.update'), [
+            'match_id' => $second->id,
+            'participant_ids' => [$andika->id],
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('match_rosters', [
+            'match_id' => $second->id,
+            'team_id' => $achilles->id,
+            'participant_id' => $andika->id,
+        ]);
+        $this->assertSame(1, MatchRoster::query()->where('match_id', $first->id)->count());
+        $this->assertSame(1, MatchRoster::query()->where('match_id', $second->id)->count());
+    }
+
+    public function test_user_roster_locks_day_before_match_at_end_of_day(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-11-19 10:00:00', 'Asia/Jakarta'));
+        [$admin, $pic, $achilles, $odysseus, $game] = $this->seedPicContext();
+
+        $this->actingAs($admin)->post(route('panitia.participants.store'), [
+            'team_id' => $achilles->id,
+            'name' => 'Andika Pratama',
+        ]);
+        $andika = Participant::query()->where('name', 'Andika Pratama')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('panitia.matches.store'), [
+            'game_id' => $game->id,
+            'round_label' => 'Semifinal',
+            'scheduled_at' => '2026-11-21 09:00:00',
+            'location' => 'Lapangan',
+            'status' => 'upcoming',
+            'team_ids' => [$achilles->id, $odysseus->id],
+        ])->assertRedirect();
+
+        $match = GameMatch::query()->firstOrFail();
+
+        $this->actingAs($pic)->get(route('pic.rosters.edit', ['match_id' => $match->id]))
+            ->assertOk()
+            ->assertSee('Countdown batas input roster')
+            ->assertSee('23:59:59')
+            ->assertDontSee('Roster terkunci');
+
+        $this->actingAs($pic)->put(route('pic.rosters.update'), [
+            'match_id' => $match->id,
+            'participant_ids' => [$andika->id],
+        ])->assertRedirect();
+
+        Carbon::setTestNow(Carbon::parse('2026-11-20 09:00:00', 'Asia/Jakarta'));
+
+        $this->actingAs($pic)->put(route('pic.rosters.update'), [
+            'match_id' => $match->id,
+            'participant_ids' => [$andika->id],
+        ])->assertRedirect();
+
+        Carbon::setTestNow(Carbon::parse('2026-11-20 23:59:59', 'Asia/Jakarta'));
+
+        $this->actingAs($pic)->put(route('pic.rosters.update'), [
+            'match_id' => $match->id,
+            'participant_ids' => [$andika->id],
+        ])->assertRedirect();
+
+        Carbon::setTestNow(Carbon::parse('2026-11-21 00:00:00', 'Asia/Jakarta'));
+
+        $this->actingAs($pic)->from(route('pic.rosters.edit', ['match_id' => $match->id]))
+            ->put(route('pic.rosters.update'), [
+                'match_id' => $match->id,
+                'participant_ids' => [$andika->id],
+            ])
+            ->assertSessionHasErrors('participant_ids');
+
+        $this->actingAs($pic)->get(route('pic.rosters.edit', ['match_id' => $match->id]))
+            ->assertOk()
+            ->assertSee('Roster terkunci')
+            ->assertSee('sehari sebelum pertandingan pukul 23:59:59')
+            ->assertSee('Batas input roster sudah habis');
+
+        $this->actingAs($admin)->put(route('panitia.rosters.update'), [
+            'match_id' => $match->id,
+            'team_id' => $achilles->id,
+            'participant_ids' => [$andika->id],
+        ])->assertRedirect();
     }
 
     /**

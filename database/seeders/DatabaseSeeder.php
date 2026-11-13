@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             'ends_at' => '2026-11-22 18:00:00',
             'venue' => 'Aula utama',
             'hero_kicker' => 'Company Gathering 2026',
-            'hero_highlight' => 'TOURNAMENT',
+            'hero_highlight' => 'SPARTA',
             'hero_body' => 'Countdown menuju pertandingan berikutnya.',
         ]);
 
@@ -42,6 +42,8 @@ class DatabaseSeeder extends Seeder
                 'slug' => 'mini-soccer',
                 'format' => 'head_to_head',
                 'requires_roster' => true,
+                'roster_min' => 1,
+                'roster_max' => 11,
                 'uses_period_score' => true,
                 'period_label' => 'Babak',
                 'period_count_default' => 2,
@@ -53,6 +55,8 @@ class DatabaseSeeder extends Seeder
                 'slug' => 'voli',
                 'format' => 'round_robin',
                 'requires_roster' => true,
+                'roster_min' => 1,
+                'roster_max' => 6,
                 'uses_period_score' => true,
                 'period_label' => 'Set',
                 'period_count_default' => 3,

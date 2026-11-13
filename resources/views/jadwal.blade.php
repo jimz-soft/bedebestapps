@@ -17,7 +17,7 @@
         @endforeach
     </div>
 
-    @forelse ($days as $day)
+    @foreach ($days as $day)
         <section class="mb-12">
             <h2 class="font-gaming text-sm uppercase tracking-[0.2em] text-brand-gold mb-5">{{ $day['label'] }}</h2>
             <div class="space-y-6">
@@ -26,11 +26,6 @@
                 @endforeach
             </div>
         </section>
-    @empty
-        <div class="bg-brand-card border border-white/5 rounded-2xl p-10 text-center">
-            <p class="font-gaming text-lg mb-2">BELUM ADA JADWAL</p>
-            <p class="text-sm text-gray-500">Jadwal pertandingan belum diisi panitia.</p>
-        </div>
-    @endforelse
+    @endforeach
 </main>
 </x-layouts.public>

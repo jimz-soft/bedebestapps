@@ -1,8 +1,7 @@
 <x-layouts.public :setting="$setting" active="leaderboard" :title="'Leaderboard | '.($setting->name ?? 'BedeBest')">
 <main class="max-w-5xl mx-auto px-4 pt-28 pb-20">
     <p class="text-brand-cyan uppercase tracking-widest text-xs mb-2">Juara umum</p>
-    <h1 class="font-gaming text-4xl mb-3 text-brand-gold">LEADERBOARD</h1>
-    <p class="text-gray-400 text-sm mb-8">Total = poin games + poin personil. Keduanya diketik panitia per pertandingan (total akhir, bukan jumlah orang).</p>
+    <h1 class="font-gaming text-4xl mb-8 text-brand-gold">LEADERBOARD</h1>
 
     @if ($standings->isEmpty())
         <div class="bg-brand-card border border-white/5 rounded-2xl p-10 text-center">
@@ -29,7 +28,7 @@
                     <span class="col-span-1">#</span>
                     <span class="col-span-4">Grup</span>
                     <span class="col-span-2 text-right">Games</span>
-                    <span class="col-span-2 text-right">Personil</span>
+                    <span class="col-span-2 text-right">Poin Supporter</span>
                     <span class="col-span-3 text-right">Total</span>
                 </div>
                 @foreach ($standings as $row)
@@ -37,7 +36,7 @@
                         <span class="col-span-1 font-gaming {{ $row['rank_color'] }}">{{ $row['rank'] }}</span>
                         <span class="col-span-4 flex items-center gap-2 min-w-0">
                             <x-team-avatar :team="$row['team']" size="w-7 h-7" />
-                            <span class="truncate">{{ $row['team']->name }}</span>
+                            <span class="font-gaming truncate">{{ $row['team']->name }}</span>
                         </span>
                         <span class="col-span-2 text-right text-gray-400">{{ $row['poin_games'] }}</span>
                         <span class="col-span-2 text-right text-gray-400">{{ $row['poin_personil'] }}</span>

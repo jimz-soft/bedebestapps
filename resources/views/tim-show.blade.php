@@ -56,14 +56,15 @@
         @endforelse
     </ul>
 
-    @if ($rosterGames->isNotEmpty())
-        <h2 class="font-gaming uppercase mb-2">Roster per game</h2>
-        <p class="text-xs text-gray-500 mb-4">Dipilih PIC atau panitia dari daftar peserta. Game dengan roster off tidak ditampilkan.</p>
+    @if ($rosterMatches->isNotEmpty())
+        <h2 class="font-gaming uppercase mb-2">Roster per pertandingan</h2>
+        <p class="text-xs text-gray-500 mb-4">Dipilih PIC atau panitia dari daftar peserta. Tiap pertandingan bisa punya roster berbeda.</p>
         <div class="grid md:grid-cols-2 gap-4 mb-10">
-            @foreach ($rosterGames as $game)
-                @php $entries = $rosters->get($game->id) ?? collect(); @endphp
+            @foreach ($rosterMatches as $rosterMatch)
+                @php $entries = $rosters->get($rosterMatch->id) ?? collect(); @endphp
                 <div class="bg-brand-card border border-white/5 rounded-2xl p-5">
-                    <p class="font-gaming text-sm mb-3">{{ $game->name }} <span class="text-[10px] text-brand-cyan">On</span></p>
+                    <p class="font-gaming text-sm mb-1">{{ $rosterMatch->game?->name }}</p>
+                    <p class="text-[11px] text-gray-500 mb-3">{{ $rosterMatch->round_label }}@if ($rosterMatch->matchTeams->isNotEmpty()) · {{ $rosterMatch->matchTeams->pluck('team.name')->filter()->join(' vs ') }}@endif</p>
                     <p class="text-sm text-gray-300">
                         @forelse ($entries as $entry)
                             {{ $entry->participant?->name }}@if ($entry->participant?->is_captain) <span class="text-[10px] text-brand-purple">K</span>@endif @if (! $loop->last)·@endif

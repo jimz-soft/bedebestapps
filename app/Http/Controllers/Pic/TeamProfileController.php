@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Pic;
 
 use App\Http\Controllers\Controller;
-use App\Models\Game;
-use App\Models\GameRoster;
+use App\Models\GameMatch;
+use App\Models\MatchRoster;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -16,17 +16,28 @@ class TeamProfileController extends Controller
             'participants' => fn ($query) => $query->orderByDesc('is_captain')->orderBy('name'),
         ])->firstOrFail();
 
-        $games = Game::query()->active()->where('requires_roster', true)->orderBy('id')->get();
-        $rosters = GameRoster::query()
-            ->with('participant')
-            ->where('team_id', $team->id)
-            ->whereIn('game_id', $games->modelKeys())
-            ->get()
-            ->groupBy(fn (GameRoster $row) => (int) $row->game_id);
+        $matches = GameMatch::query()
+            ->with(['game', 'matchTeams.team'])
+            ->whereHas('game', fn ($game) => $game->active()->where('requires_roster', true))
+            ->whereHas('matchTeams', fn ($side) => $side->where('team_id', $team->id))
+            ->orderByRaw("case status when 'live' then 0 when 'upcoming' then 1 else 2 end")
+            ->orderByRaw('case when scheduled_at is null then 1 else 0 end')
+            ->orderBy('scheduled_at')
+            ->orderBy('id')
+            ->get();
+
+        $rosters = $matches->isEmpty()
+            ? collect()
+            : MatchRoster::query()
+                ->with('participant')
+                ->where('team_id', $team->id)
+                ->whereIn('match_id', $matches->modelKeys())
+                ->get()
+                ->groupBy(fn (MatchRoster $row) => (int) $row->match_id);
 
         return view('pic.profil', [
             'team' => $team,
-            'games' => $games,
+            'matches' => $matches,
             'rosters' => $rosters,
         ]);
     }

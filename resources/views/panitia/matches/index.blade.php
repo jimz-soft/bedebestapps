@@ -4,11 +4,12 @@
 
 @section('content')
 <section class="bg-brand-card border border-white/5 rounded-2xl p-6">
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
         <h1 class="font-gaming text-2xl">JADWAL</h1>
         <a href="{{ route('panitia.matches.create') }}" class="px-5 py-2 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-sm font-semibold">Jadwal baru</a>
     </div>
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full min-w-[720px] text-sm">
         <thead class="text-xs uppercase text-gray-500">
             <tr><th class="text-left py-2">Game</th><th>Babak</th><th>Tim</th><th>Waktu</th><th>Status</th><th></th></tr>
         </thead>
@@ -35,5 +36,6 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </section>
 @endsection

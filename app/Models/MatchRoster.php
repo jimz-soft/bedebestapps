@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['game_id', 'team_id', 'participant_id'])]
-class GameRoster extends Model
+#[Fillable(['match_id', 'team_id', 'participant_id'])]
+class MatchRoster extends Model
 {
     /**
-     * @return BelongsTo<Game, $this>
+     * @return BelongsTo<GameMatch, $this>
      */
-    public function game(): BelongsTo
+    public function match(): BelongsTo
     {
-        return $this->belongsTo(Game::class);
+        return $this->belongsTo(GameMatch::class, 'match_id');
     }
 
     /**

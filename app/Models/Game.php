@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'slug',
     'format',
     'requires_roster',
+    'roster_min',
+    'roster_max',
     'uses_period_score',
     'period_label',
     'period_count_default',
@@ -53,12 +55,13 @@ class Game extends Model
     }
 
     /**
-     * @return HasMany<GameRoster, $this>
+     * @return HasMany<GameGalleryPhoto, $this>
      */
-    public function rosters(): HasMany
+    public function galleryPhotos(): HasMany
     {
-        return $this->hasMany(GameRoster::class);
+        return $this->hasMany(GameGalleryPhoto::class)->orderBy('sort_order')->orderBy('id');
     }
+
 
     public function formatLabel(): string
     {

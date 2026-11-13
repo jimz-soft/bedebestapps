@@ -44,11 +44,11 @@ class Team extends Model
     }
 
     /**
-     * @return HasMany<GameRoster, $this>
+     * @return HasMany<MatchRoster, $this>
      */
     public function rosters(): HasMany
     {
-        return $this->hasMany(GameRoster::class);
+        return $this->hasMany(MatchRoster::class);
     }
 
     public function bannerUrl(): string

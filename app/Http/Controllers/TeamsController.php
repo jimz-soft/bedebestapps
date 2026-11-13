@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Game;
 use App\Models\GameMatch;
-use App\Models\GameRoster;
+use App\Models\MatchRoster;
 use App\Models\Setting;
 use App\Models\Team;
 use App\Support\LiveBoard;
@@ -52,19 +51,29 @@ class TeamsController extends Controller
         ]);
 
         $row = $this->rankedStandings($board)->get($team->id);
-        $rosterGames = Game::query()->active()->where('requires_roster', true)->orderBy('name')->get();
-        $rosters = $rosterGames->isEmpty()
+
+        $rosterMatches = GameMatch::query()
+            ->with(['game', 'matchTeams.team'])
+            ->whereHas('game', fn ($game) => $game->active()->where('requires_roster', true))
+            ->whereHas('matchTeams', fn ($side) => $side->where('team_id', $team->id))
+            ->orderByRaw("case status when 'live' then 0 when 'upcoming' then 1 else 2 end")
+            ->orderByRaw('case when scheduled_at is null then 1 else 0 end')
+            ->orderBy('scheduled_at')
+            ->orderBy('id')
+            ->get();
+
+        $rosters = $rosterMatches->isEmpty()
             ? collect()
-            : GameRoster::query()
+            : MatchRoster::query()
                 ->with('participant')
                 ->where('team_id', $team->id)
-                ->whereIn('game_id', $rosterGames->modelKeys())
+                ->whereIn('match_id', $rosterMatches->modelKeys())
                 ->get()
-                ->sortBy(fn (GameRoster $item) => [
+                ->sortBy(fn (MatchRoster $item) => [
                     $item->participant?->is_captain ? 0 : 1,
                     strtolower((string) $item->participant?->name),
                 ])
-                ->groupBy(fn (GameRoster $item) => (int) $item->game_id);
+                ->groupBy(fn (MatchRoster $item) => (int) $item->match_id);
 
         $matches = GameMatch::query()
             ->with(['game', 'matchTeams.team'])
@@ -82,7 +91,7 @@ class TeamsController extends Controller
             'poin_personil' => (int) ($row['poin_personil'] ?? 0),
             'total' => (int) ($row['total'] ?? 0),
             'captains' => $team->participants->where('is_captain', true)->values(),
-            'rosterGames' => $rosterGames,
+            'rosterMatches' => $rosterMatches,
             'rosters' => $rosters,
             'matches' => $matches,
         ]);

@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Game;
 use App\Models\GameMatch;
-use App\Models\GameRoster;
+use App\Models\MatchRoster;
 use App\Models\Participant;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -18,7 +19,33 @@ class RosterController extends Controller
     public function edit(Request $request): View
     {
         $user = $this->actor($request);
-        [$games, $teams, $game, $team] = $this->context($request, $user);
+        $allMatches = $this->availableMatches($user);
+        $layout = $user->isAdministrator() ? 'layouts.panitia' : 'layouts.tim';
+        $formAction = $user->isAdministrator() ? route('panitia.rosters.update') : route('pic.rosters.update');
+        $canPickTeam = $user->isAdministrator();
+
+        $games = $this->gamesFromMatches($allMatches);
+
+        if ($games->isEmpty()) {
+            return view('rosters.edit', [
+                'layout' => $layout,
+                'formAction' => $formAction,
+                'games' => $games,
+                'matches' => collect(),
+                'match' => null,
+                'game' => null,
+                'team' => $canPickTeam ? null : $user->team,
+                'teams' => collect(),
+                'participants' => collect(),
+                'selectedIds' => [],
+                'locked' => false,
+                'lockReason' => null,
+                'deadlineCountdown' => null,
+                'canPickTeam' => $canPickTeam,
+            ]);
+        }
+
+        [$game, $match, $team, $matches] = $this->resolveContext($request, $user, $allMatches, $games);
 
         $participants = Participant::query()
             ->where('team_id', $team->id)
@@ -26,40 +53,56 @@ class RosterController extends Controller
             ->orderBy('name')
             ->get();
 
-        $selectedIds = GameRoster::query()
-            ->where('game_id', $game->id)
+        $selectedIds = MatchRoster::query()
+            ->where('match_id', $match->id)
             ->where('team_id', $team->id)
             ->pluck('participant_id')
             ->all();
 
         return view('rosters.edit', [
-            'layout' => $user->isAdministrator() ? 'layouts.panitia' : 'layouts.tim',
-            'formAction' => $user->isAdministrator() ? route('panitia.rosters.update') : route('pic.rosters.update'),
+            'layout' => $layout,
+            'formAction' => $formAction,
             'games' => $games,
-            'teams' => $teams,
+            'matches' => $matches,
+            'match' => $match,
             'game' => $game,
             'team' => $team,
+            'teams' => $match->matchTeams->pluck('team')->filter()->values(),
             'participants' => $participants,
             'selectedIds' => $selectedIds,
-            'locked' => $this->isLocked($game, $team, $user),
-            'canPickTeam' => $user->isAdministrator(),
+            'locked' => $this->isLocked($match, $user),
+            'lockReason' => $this->lockReason($match, $user),
+            'deadlineCountdown' => (! $canPickTeam && $match->status !== 'selesai')
+                ? $match->rosterDeadlineCountdown()
+                : null,
+            'canPickTeam' => $canPickTeam,
         ]);
     }
 
     public function update(Request $request): RedirectResponse
     {
         $user = $this->actor($request);
-        [, , $game, $team] = $this->context($request, $user);
+        $allMatches = $this->availableMatches($user);
+        $games = $this->gamesFromMatches($allMatches);
 
-        if ($this->isLocked($game, $team, $user)) {
+        if ($games->isEmpty()) {
             throw ValidationException::withMessages([
-                'participant_ids' => 'Roster sudah terkunci karena semua pertandingan cabang ini untuk grup tersebut sudah selesai.',
+                'match_id' => 'Belum ada jadwal pertandingan yang memakai roster.',
             ]);
         }
 
-        if (! $game->requires_roster) {
+        [, $match, $team] = $this->resolveContext($request, $user, $allMatches, $games);
+        $game = $match->game;
+
+        if ($this->isLocked($match, $user)) {
             throw ValidationException::withMessages([
-                'game_id' => 'Game ini tidak memakai roster.',
+                'participant_ids' => $this->lockMessage($match, $user),
+            ]);
+        }
+
+        if (! $game?->requires_roster) {
+            throw ValidationException::withMessages([
+                'match_id' => 'Pertandingan ini tidak memakai roster.',
             ]);
         }
 
@@ -79,8 +122,18 @@ class RosterController extends Controller
             ]);
         }
 
-        $existing = GameRoster::query()
-            ->where('game_id', $game->id)
+        $min = (int) ($game->roster_min ?? 0);
+        $max = (int) ($game->roster_max ?? 50);
+        $count = $ids->count();
+
+        if ($count < $min || $count > $max) {
+            throw ValidationException::withMessages([
+                'participant_ids' => 'Roster '.$game->name.' harus '.$min.'–'.$max.' pemain. Saat ini dipilih '.$count.'.',
+            ]);
+        }
+
+        $existing = MatchRoster::query()
+            ->where('match_id', $match->id)
             ->where('team_id', $team->id);
 
         if ($ids->isEmpty()) {
@@ -90,8 +143,8 @@ class RosterController extends Controller
         }
 
         foreach ($ids as $participantId) {
-            GameRoster::query()->firstOrCreate([
-                'game_id' => $game->id,
+            MatchRoster::query()->firstOrCreate([
+                'match_id' => $match->id,
                 'team_id' => $team->id,
                 'participant_id' => $participantId,
             ]);
@@ -100,8 +153,12 @@ class RosterController extends Controller
         $index = $user->isAdministrator() ? 'panitia.rosters.edit' : 'pic.rosters.edit';
 
         return redirect()
-            ->route($index, ['game_id' => $game->id, 'team_id' => $team->id])
-            ->with('status', 'Roster '.$team->name.' untuk '.$game->name.' sudah disimpan.');
+            ->route($index, [
+                'game_id' => $match->game_id,
+                'match_id' => $match->id,
+                'team_id' => $team->id,
+            ])
+            ->with('status', 'Roster '.$team->name.' untuk '.$match->rosterLabel().' sudah disimpan.');
     }
 
     private function actor(Request $request): User
@@ -124,54 +181,131 @@ class RosterController extends Controller
     }
 
     /**
-     * @return array{0: \Illuminate\Support\Collection<int, Game>, 1: \Illuminate\Support\Collection<int, Team>, 2: Game, 3: Team}
+     * @param  Collection<int, GameMatch>  $allMatches
+     * @param  Collection<int, Game>  $games
+     * @return array{0: Game, 1: GameMatch, 2: Team, 3: Collection<int, GameMatch>}
      */
-    private function context(Request $request, User $user): array
+    private function resolveContext(Request $request, User $user, Collection $allMatches, Collection $games): array
     {
-        $games = Game::query()->active()->where('requires_roster', true)->orderBy('id')->get();
-        $teams = $user->isAdministrator()
-            ? Team::query()->orderBy('sort_order')->get()
-            : Team::query()->whereKey($user->team_id)->get();
-
-        if ($games->isEmpty() || $teams->isEmpty()) {
-            abort(404, 'Belum ada game roster atau grup.');
+        $requestedMatch = null;
+        if ($request->filled('match_id')) {
+            $requestedMatch = $allMatches->firstWhere('id', (int) $request->input('match_id'));
         }
 
-        $gameId = (int) $request->input('game_id', $games->first()->id);
-        $teamId = $user->isAdministrator()
-            ? (int) $request->input('team_id', $teams->first()->id)
-            : (int) $user->team_id;
+        $gameId = (int) $request->input(
+            'game_id',
+            $requestedMatch?->game_id ?? $games->first()->id
+        );
 
         $game = $games->firstWhere('id', $gameId);
-        $team = $teams->firstWhere('id', $teamId) ?? $teams->first();
 
         if ($game === null) {
             if ($request->isMethod('PUT') || $request->isMethod('POST')) {
                 throw ValidationException::withMessages([
-                    'game_id' => 'Game ini tidak memakai roster.',
+                    'match_id' => 'Pertandingan ini tidak memakai roster.',
                 ]);
             }
 
             $game = $games->first();
         }
 
-        return [$games, $teams, $game, $team];
+        $matches = $allMatches->where('game_id', $game->id)->values();
+
+        if ($matches->isEmpty()) {
+            abort(404, 'Belum ada jadwal untuk game ini.');
+        }
+
+        $match = $matches->firstWhere('id', (int) $request->input('match_id'));
+
+        if ($match === null) {
+            if (($request->isMethod('PUT') || $request->isMethod('POST')) && $request->filled('match_id')) {
+                throw ValidationException::withMessages([
+                    'match_id' => 'Pertandingan ini tidak memakai roster.',
+                ]);
+            }
+
+            $match = $matches->first();
+        }
+
+        $match->loadMissing(['game', 'matchTeams.team']);
+
+        $teamOptions = $match->matchTeams->pluck('team')->filter()->values();
+
+        if ($user->isAdministrator()) {
+            $teamId = (int) $request->input('team_id', $teamOptions->first()?->id);
+            $team = $teamOptions->firstWhere('id', $teamId) ?? $teamOptions->first();
+        } else {
+            $team = $teamOptions->firstWhere('id', $user->team_id);
+        }
+
+        if ($team === null) {
+            abort(404, 'Grup tidak ikut di pertandingan ini.');
+        }
+
+        return [$game, $match, $team, $matches];
     }
 
-    private function isLocked(Game $game, Team $team, User $user): bool
+    /**
+     * @param  Collection<int, GameMatch>  $matches
+     * @return Collection<int, Game>
+     */
+    private function gamesFromMatches(Collection $matches): Collection
+    {
+        return $matches
+            ->map(fn (GameMatch $match) => $match->game)
+            ->filter()
+            ->unique('id')
+            ->sortBy('name')
+            ->values();
+    }
+
+    /**
+     * @return Collection<int, GameMatch>
+     */
+    private function availableMatches(User $user): Collection
+    {
+        $query = GameMatch::query()
+            ->with(['game', 'matchTeams.team'])
+            ->whereHas('game', fn ($game) => $game->active()->where('requires_roster', true))
+            ->orderByRaw("case status when 'live' then 0 when 'upcoming' then 1 else 2 end")
+            ->orderByRaw('case when scheduled_at is null then 1 else 0 end')
+            ->orderBy('scheduled_at')
+            ->orderBy('id');
+
+        if (! $user->isAdministrator()) {
+            $query->whereHas('matchTeams', fn ($side) => $side->where('team_id', $user->team_id));
+        }
+
+        return $query->get();
+    }
+
+    private function isLocked(GameMatch $match, User $user): bool
     {
         if ($user->isAdministrator()) {
             return false;
         }
 
-        $matches = fn () => GameMatch::query()
-            ->where('game_id', $game->id)
-            ->whereHas('matchTeams', fn ($match) => $match->where('team_id', $team->id));
+        return $match->rosterInputClosedForUsers();
+    }
 
-        if ($matches()->whereIn('status', ['upcoming', 'live'])->exists()) {
-            return false;
+    private function lockReason(GameMatch $match, User $user): ?string
+    {
+        if ($user->isAdministrator() || ! $this->isLocked($match, $user)) {
+            return null;
         }
 
-        return $matches()->where('status', 'selesai')->exists();
+        if ($match->status === 'selesai') {
+            return 'selesai';
+        }
+
+        return 'deadline';
+    }
+
+    private function lockMessage(GameMatch $match, User $user): string
+    {
+        return match ($this->lockReason($match, $user)) {
+            'deadline' => 'Roster sudah terkunci. Batas input adalah sehari sebelum pertandingan pukul 23:59:59.',
+            default => 'Roster sudah terkunci karena pertandingan ini sudah selesai.',
+        };
     }
 }

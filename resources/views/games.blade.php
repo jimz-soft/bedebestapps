@@ -7,7 +7,7 @@
 <main class="max-w-5xl mx-auto px-4 pt-28 pb-20">
     <p class="text-brand-cyan uppercase tracking-widest text-xs mb-2">Cabang</p>
     <h1 class="font-gaming text-4xl mb-3 text-brand-gold">GAMES</h1>
-    <p class="text-gray-400 text-sm mb-10">Peraturan dan banner tiap cabang diisi administrator. Roster on/off diatur per game. Poin games + poin personil diketik panitia setelah bertanding.</p>
+    <p class="text-gray-400 text-sm mb-10">Games yang akan Di pertandingkan Selama Event </p>
 
     <div class="space-y-6">
         @forelse ($games as $game)

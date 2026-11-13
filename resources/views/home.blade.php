@@ -1,17 +1,15 @@
 <x-layouts.public :setting="$setting" active="home" :title="($setting->name ?? 'BedeBest').' Tournament'">
 <section class="relative pt-32 pb-16 min-h-[80vh] flex items-center overflow-hidden">
     <div class="absolute inset-0 bg-brand-dark/90"></div>
-    <div class="absolute inset-0 bg-cover bg-center opacity-15" style="background-image:url('{{ $setting?->heroBannerUrl() ?? 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2070&auto=format&fit=crop' }}')"></div>
+    <div class="absolute inset-0 bg-cover bg-center opacity-60" style="background-image:url('{{ $setting?->heroBannerUrl() ?? 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2070&auto=format&fit=crop' }}')"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-purple/20 rounded-full blur-[120px]"></div>
     <div class="max-w-7xl mx-auto px-4 relative z-10 text-center">
         @if ($setting?->logoUrl())
-            <img src="{{ $setting->logoUrl() }}" alt="{{ $setting->name }}" class="w-20 h-20 rounded-full object-cover mx-auto mb-6 shadow-[0_0_30px_rgba(139,92,246,.5)]">
+            <img src="{{ $setting->logoUrl() }}" alt="{{ $setting->name }}" class="hero-logo-glow w-80 h-80 md:w-[25rem] md:h-[25rem] lg:w-[35rem] lg:h-[35rem] object-contain mx-auto mb-0">
         @else
             <span class="w-20 h-20 rounded-full bg-gradient-to-br from-brand-purple to-brand-cyan inline-flex items-center justify-center font-gaming font-black text-2xl mb-6 shadow-[0_0_30px_rgba(139,92,246,.5)]">BB</span>
         @endif
-        <p class="text-brand-cyan uppercase tracking-[0.3em] text-sm font-semibold mb-4">{{ $setting->hero_kicker ?? 'Company Gathering' }}</p>
-        <h1 class="font-gaming text-4xl md:text-6xl font-bold mb-6">{{ strtoupper($setting->name ?? 'BEDEBEST') }}<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-purple neon-text">{{ $setting->hero_highlight ?? 'TOURNAMENT' }}</span></h1>
-        <p class="text-gray-400 max-w-xl mx-auto mb-8 tracking-wide">
+        <p class="font-apple text-brand-gold max-w-xl mx-auto mb-6 -mt-14 md:-mt-20 tracking-wide">
             @if ($countdown['live'])
                 Pertandingan sedang berlangsung.
             @elseif ($countdown['label'] !== '')
@@ -21,24 +19,19 @@
             @endif
         </p>
         <div id="match-countdown" class="flex justify-center flex-wrap gap-3 sm:gap-4 mb-3" data-remaining="{{ $countdown['remaining'] }}" data-live="{{ $countdown['live'] ? '1' : '0' }}">
-            <div class="bg-brand-card/80 border border-white/10 rounded-2xl px-4 sm:px-5 py-4 min-w-[68px]"><p id="countdown-days" class="font-gaming text-3xl text-brand-cyan">{{ $countdown['days'] }}</p><p class="text-[10px] uppercase text-gray-500 mt-1">Hari</p></div>
-            <div class="bg-brand-card/80 border border-white/10 rounded-2xl px-4 sm:px-5 py-4 min-w-[68px]"><p id="countdown-hours" class="font-gaming text-3xl text-brand-cyan">{{ $countdown['hours'] }}</p><p class="text-[10px] uppercase text-gray-500 mt-1">Jam</p></div>
-            <div class="bg-brand-card/80 border border-white/10 rounded-2xl px-4 sm:px-5 py-4 min-w-[68px]"><p id="countdown-minutes" class="font-gaming text-3xl text-brand-cyan">{{ $countdown['minutes'] }}</p><p class="text-[10px] uppercase text-gray-500 mt-1">Menit</p></div>
-            <div class="bg-brand-card/80 border border-white/10 rounded-2xl px-4 sm:px-5 py-4 min-w-[68px]"><p id="countdown-seconds" class="font-gaming text-3xl text-brand-cyan">{{ $countdown['seconds'] }}</p><p class="text-[10px] uppercase text-gray-500 mt-1">Detik</p></div>
+            <div class="bg-brand-card/80 border border-white/10 rounded-2xl px-4 sm:px-6 py-4 sm:py-5 min-w-[76px] sm:min-w-[96px]"><p id="countdown-days" class="font-gaming text-4xl sm:text-5xl text-brand-cyan">{{ $countdown['days'] }}</p><p class="text-[11px] uppercase tracking-wider text-gray-500 mt-1.5">Hari</p></div>
+            <div class="bg-brand-card/80 border border-white/10 rounded-2xl px-4 sm:px-6 py-4 sm:py-5 min-w-[76px] sm:min-w-[96px]"><p id="countdown-hours" class="font-gaming text-4xl sm:text-5xl text-brand-cyan">{{ $countdown['hours'] }}</p><p class="text-[11px] uppercase tracking-wider text-gray-500 mt-1.5">Jam</p></div>
+            <div class="bg-brand-card/80 border border-white/10 rounded-2xl px-4 sm:px-6 py-4 sm:py-5 min-w-[76px] sm:min-w-[96px]"><p id="countdown-minutes" class="font-gaming text-4xl sm:text-5xl text-brand-cyan">{{ $countdown['minutes'] }}</p><p class="text-[11px] uppercase tracking-wider text-gray-500 mt-1.5">Menit</p></div>
+            <div class="bg-brand-card/80 border border-white/10 rounded-2xl px-4 sm:px-6 py-4 sm:py-5 min-w-[76px] sm:min-w-[96px]"><p id="countdown-seconds" class="font-gaming text-4xl sm:text-5xl text-brand-cyan">{{ $countdown['seconds'] }}</p><p class="text-[11px] uppercase tracking-wider text-gray-500 mt-1.5">Detik</p></div>
         </div>
         @if ($countdown['label'] !== '')
-            <p id="countdown-label" class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-10">{{ $countdown['label'] }}</p>
+            <p id="countdown-label" class="font-apple text-xs uppercase tracking-[0.2em] text-brand-gold mb-10">{{ $countdown['label'] }}</p>
         @else
-            <p id="countdown-label" class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-10">Belum ada jadwal pertandingan</p>
+            <p id="countdown-label" class="font-apple text-xs uppercase tracking-[0.2em] text-brand-gold mb-10">Belum ada jadwal pertandingan</p>
         @endif
-        <div class="flex justify-center gap-4">
+        <div class="relative z-20 flex justify-center gap-4 mb-10">
             <a href="{{ route('jadwal') }}" class="bg-gradient-to-r from-brand-purple to-brand-magenta px-8 py-3.5 rounded-full font-bold text-sm uppercase">Lihat Jadwal</a>
             <a href="{{ route('leaderboard') }}" class="border border-brand-cyan text-brand-cyan px-8 py-3.5 rounded-full font-bold text-sm uppercase">Leaderboard</a>
-        </div>
-        <div class="mt-16 relative h-[180px] max-w-4xl mx-auto">
-            <div class="bg-shape clip-polygon bg-gradient-to-br from-brand-purple to-transparent left-10"></div>
-            <div class="bg-shape clip-polygon bg-gradient-to-b from-brand-cyan to-transparent left-[30%]"></div>
-            <div class="bg-shape clip-polygon-reverse bg-gradient-to-bl from-brand-magenta to-transparent right-10"></div>
         </div>
     </div>
 </section>
@@ -85,11 +78,9 @@
         <h2 class="font-gaming text-3xl uppercase">Jadwal <span class="text-brand-cyan">Pertandingan</span></h2>
     </div>
     <div class="space-y-6">
-        @forelse ($upcomingMatches as $match)
+        @foreach ($upcomingMatches as $match)
             <x-match-card :match="$match" />
-        @empty
-            <p class="text-center text-sm text-gray-500">Jadwal pertandingan belum diisi panitia.</p>
-        @endforelse
+        @endforeach
     </div>
 </section>
 
@@ -121,12 +112,41 @@
                 @endphp
                 <a href="{{ route('leaderboard') }}" class="grid grid-cols-12 items-center px-5 py-4 {{ $loop->even ? 'bg-white/[0.03]' : '' }}">
                     <span class="col-span-1 font-gaming {{ $rankColor }}">{{ $loop->iteration }}</span>
-                    <span class="col-span-7">{{ $row['team']->name }}</span>
+                    <span class="col-span-7 font-gaming">{{ $row['team']->name }}</span>
                     <span class="col-span-4 text-right font-gaming">{{ $row['total'] }}</span>
                 </a>
             @endforeach
         </div>
     </div>
+</section>
+
+<section class="pb-16 max-w-6xl mx-auto px-4">
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
+        <div>
+            <p class="text-brand-cyan uppercase tracking-widest text-xs mb-2">Dokumentasi</p>
+            <h2 class="font-gaming text-2xl uppercase">Gallery</h2>
+        </div>
+        <a href="{{ route('gallery') }}" class="text-sm uppercase tracking-wider text-brand-cyan hover:text-brand-gold">Lihat gallery foto →</a>
+    </div>
+
+    @if ($galleryPreview->isNotEmpty())
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            @foreach ($galleryPreview as $photo)
+                <a href="{{ $photo->game ? route('gallery.show', $photo->game) : route('gallery') }}" class="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/5 bg-brand-card">
+                    <img src="{{ $photo->url() }}" alt="{{ $photo->caption ?: ($photo->game?->name ?? 'Gallery') }}" class="h-full w-full object-cover transition duration-300 group-hover:scale-105">
+                    <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-3 py-2 text-[11px] uppercase tracking-wider text-brand-gold">{{ $photo->game?->name }}</span>
+                </a>
+            @endforeach
+        </div>
+        <div class="text-center">
+            <a href="{{ route('gallery') }}" class="inline-flex px-6 py-3 rounded-full border border-brand-gold/50 text-sm font-semibold uppercase tracking-wider text-brand-gold hover:border-brand-cyan hover:text-brand-cyan">Lihat lebih banyak foto</a>
+        </div>
+    @else
+        <div class="bg-brand-card border border-white/5 rounded-2xl p-8 text-center">
+            <p class="text-sm text-gray-500 mb-4">Belum ada foto gallery. Cek halaman gallery untuk update terbaru.</p>
+            <a href="{{ route('gallery') }}" class="inline-flex text-sm uppercase tracking-wider text-brand-cyan">Buka gallery →</a>
+        </div>
+    @endif
 </section>
 
 <section class="pb-20 max-w-6xl mx-auto px-4">
@@ -228,7 +248,7 @@
             const even = index % 2 === 1 ? ' bg-white/[0.03]' : '';
             return '<a href="{{ route('leaderboard') }}" class="grid grid-cols-12 items-center px-5 py-4' + even + '">' +
                 '<span class="col-span-1 font-gaming ' + (rankColor[index] || 'text-white') + '">' + (index + 1) + '</span>' +
-                '<span class="col-span-7">' + row.name + '</span>' +
+                '<span class="col-span-7 font-gaming">' + row.name + '</span>' +
                 '<span class="col-span-4 text-right font-gaming">' + row.total + '</span>' +
                 '</a>';
         }).join('');

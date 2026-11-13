@@ -23,7 +23,19 @@
                 <option value="heat" @selected(old('format', $game->format) === 'heat')>Lomba bersama</option>
             </select>
         </div>
-        <label class="text-xs text-gray-400 flex items-center gap-2"><input type="checkbox" name="requires_roster" value="1" class="w-4" @checked(old('requires_roster', $game->requires_roster))> Perlu roster (muncul di menu Pilih roster)</label>
+        <label class="text-xs text-gray-400 flex items-center gap-2"><input type="checkbox" name="requires_roster" id="requires_roster" value="1" class="w-4" @checked(old('requires_roster', $game->requires_roster))> Perlu roster (muncul di menu Pilih roster)</label>
+        <div id="roster-limits" class="grid md:grid-cols-2 gap-4 {{ old('requires_roster', $game->requires_roster) ? '' : 'hidden' }}">
+            <div>
+                <label class="text-xs text-gray-500">Minimum roster</label>
+                <input type="number" name="roster_min" value="{{ old('roster_min', $game->roster_min ?? 1) }}" min="0" max="50">
+                <p class="text-[11px] text-gray-500 mt-1">Jumlah pemain paling sedikit yang wajib dipilih.</p>
+            </div>
+            <div>
+                <label class="text-xs text-gray-500">Maximum roster</label>
+                <input type="number" name="roster_max" value="{{ old('roster_max', $game->roster_max ?? 11) }}" min="1" max="50">
+                <p class="text-[11px] text-gray-500 mt-1">Jumlah pemain paling banyak yang boleh dipilih.</p>
+            </div>
+        </div>
         <label class="text-xs text-gray-400 flex items-center gap-2"><input type="checkbox" name="uses_period_score" value="1" class="w-4" @checked(old('uses_period_score', $game->uses_period_score))> Pakai skor babak</label>
         <div class="grid md:grid-cols-3 gap-4">
             <div><label class="text-xs text-gray-500">Label babak</label><input name="period_label" value="{{ old('period_label', $game->period_label) }}" placeholder="Babak / Set"></div>
@@ -72,5 +84,14 @@
         branding: false
     });
     document.querySelector('form').addEventListener('submit', function () { tinymce.triggerSave(); });
+
+    const rosterToggle = document.getElementById('requires_roster');
+    const rosterLimits = document.getElementById('roster-limits');
+    function syncRosterLimits() {
+        if (!rosterToggle || !rosterLimits) return;
+        rosterLimits.classList.toggle('hidden', !rosterToggle.checked);
+    }
+    rosterToggle?.addEventListener('change', syncRosterLimits);
+    syncRosterLimits();
 </script>
 @endsection

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -55,6 +56,91 @@ class GameMatch extends Model
     public function periods(): HasMany
     {
         return $this->hasMany(MatchPeriod::class, 'match_id');
+    }
+
+    /**
+     * @return HasMany<MatchRoster, $this>
+     */
+    public function rosters(): HasMany
+    {
+        return $this->hasMany(MatchRoster::class, 'match_id');
+    }
+
+    public function rosterLabel(): string
+    {
+        $this->loadMissing(['game', 'matchTeams.team']);
+        $parts = array_filter([
+            $this->game?->name,
+            $this->scheduleLabel(),
+        ]);
+
+        return implode(' · ', $parts);
+    }
+
+    public function scheduleLabel(): string
+    {
+        $this->loadMissing(['matchTeams.team']);
+        $sides = $this->matchTeams->pluck('team.name')->filter()->join(' vs ');
+        $parts = array_filter([
+            $this->round_label,
+            $sides !== '' ? $sides : null,
+            $this->timeLocation() ?: null,
+        ]);
+
+        return implode(' · ', $parts) ?: ('Match #'.$this->id);
+    }
+
+    /**
+     * Batas input roster untuk role user: sehari sebelum tanggal pertandingan, pukul 23:59:59.
+     */
+    public function rosterInputDeadline(): ?CarbonInterface
+    {
+        if ($this->scheduled_at === null) {
+            return null;
+        }
+
+        return $this->scheduled_at
+            ->copy()
+            ->timezone(config('app.timezone'))
+            ->subDay()
+            ->setTime(23, 59, 59);
+    }
+
+    public function rosterInputClosedForUsers(): bool
+    {
+        if ($this->status === 'selesai') {
+            return true;
+        }
+
+        $deadline = $this->rosterInputDeadline();
+
+        return $deadline !== null && now()->greaterThan($deadline);
+    }
+
+    /**
+     * @return array{days: string, hours: string, minutes: string, seconds: string, remaining: int, expired: bool, label: string}|null
+     */
+    public function rosterDeadlineCountdown(): ?array
+    {
+        $deadline = $this->rosterInputDeadline();
+
+        if ($deadline === null) {
+            return null;
+        }
+
+        $remaining = max(0, $deadline->getTimestamp() - now()->getTimestamp());
+        $expired = $remaining <= 0;
+        $diff = now()->diff($deadline);
+
+        return [
+            'days' => str_pad((string) ($expired ? 0 : $diff->days), 2, '0', STR_PAD_LEFT),
+            'hours' => str_pad((string) ($expired ? 0 : $diff->h), 2, '0', STR_PAD_LEFT),
+            'minutes' => str_pad((string) ($expired ? 0 : $diff->i), 2, '0', STR_PAD_LEFT),
+            'seconds' => str_pad((string) ($expired ? 0 : $diff->s), 2, '0', STR_PAD_LEFT),
+            'remaining' => $remaining,
+            'expired' => $expired,
+            'label' => 'Batas input roster · '.$deadline->timezone(config('app.timezone'))->format('d M Y H:i:s'),
+        ];
     }
 
     public function isDuel(): bool

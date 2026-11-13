@@ -13,15 +13,31 @@ class Media
             return null;
         }
 
-        return asset('storage/'.$path);
+        $url = asset('storage/'.$path);
+        $fullPath = Storage::disk('public')->path($path);
+
+        if (is_file($fullPath)) {
+            $url .= (str_contains($url, '?') ? '&' : '?').'v='.filemtime($fullPath);
+        }
+
+        return $url;
     }
 
     public static function store(UploadedFile $file, string $directory, ?string $oldPath = null): string
     {
         if ($oldPath) {
-            Storage::disk('public')->delete($oldPath);
+            self::delete($oldPath);
         }
 
         return $file->store($directory, 'public');
+    }
+
+    public static function delete(?string $path): void
+    {
+        if ($path === null || $path === '') {
+            return;
+        }
+
+        Storage::disk('public')->delete($path);
     }
 }

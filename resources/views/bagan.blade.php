@@ -174,7 +174,7 @@
                                             <th class="text-left py-2">#</th>
                                             <th class="text-left py-2">Grup</th>
                                             <th class="text-right py-2">Poin games</th>
-                                            <th class="text-right py-2">Poin personil</th>
+                                            <th class="text-right py-2">Poin Supporter</th>
                                             <th class="text-right py-2">Total</th>
                                         </tr>
                                     </thead>
@@ -202,7 +202,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <p class="text-[11px] text-gray-500 mt-3">Total = poin games + poin personil (diketik panitia).</p>
+                            <p class="text-[11px] text-gray-500 mt-3">Total = poin games + Poin Supporter (diketik panitia).</p>
                         </div>
                     @empty
                         <div class="bg-brand-card border border-white/5 rounded-2xl p-8 text-center">

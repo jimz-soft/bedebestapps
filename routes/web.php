@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BaganController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\GamesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\LiveScoreController;
 use App\Http\Controllers\Panitia\BannerController;
 use App\Http\Controllers\Panitia\DashboardController;
+use App\Http\Controllers\Panitia\GalleryController as PanitiaGalleryController;
 use App\Http\Controllers\Panitia\GameController;
 use App\Http\Controllers\Panitia\GroupController;
 use App\Http\Controllers\Panitia\MatchController;
@@ -28,6 +30,9 @@ Route::get('/games', GamesController::class)->name('games');
 Route::get('/tim', [TeamsController::class, 'index'])->name('tim');
 Route::get('/tim/{team:slug}', [TeamsController::class, 'show'])->name('tim.show');
 Route::get('/bagan', BaganController::class)->name('bagan');
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery');
+Route::get('/gallery/foto/{photo}/download', [GalleryController::class, 'download'])->name('gallery.download');
+Route::get('/gallery/{game:slug}', [GalleryController::class, 'show'])->name('gallery.show');
 Route::get('/leaderboard', LeaderboardController::class)->name('leaderboard');
 
 Route::middleware('guest')->group(function () {
@@ -49,6 +54,11 @@ Route::middleware(['auth', 'panitia'])->prefix('panitia')->name('panitia.')->gro
     Route::get('/', DashboardController::class)->name('dashboard');
     Route::get('/banner', [BannerController::class, 'edit'])->name('banners.edit');
     Route::put('/banner', [BannerController::class, 'update'])->name('banners.update');
+
+    Route::get('/gallery', [PanitiaGalleryController::class, 'index'])->name('gallery.index');
+    Route::get('/gallery/{game}', [PanitiaGalleryController::class, 'show'])->name('gallery.show');
+    Route::post('/gallery/{game}', [PanitiaGalleryController::class, 'store'])->name('gallery.store');
+    Route::delete('/gallery/{game}/{photo}', [PanitiaGalleryController::class, 'destroy'])->name('gallery.destroy');
 
     Route::resource('users', UserController::class)->except(['show', 'destroy']);
     Route::resource('grup', GroupController::class)->parameters(['grup' => 'team'])->except(['show']);

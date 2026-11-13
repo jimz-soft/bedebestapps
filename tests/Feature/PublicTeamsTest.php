@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Game;
 use App\Models\GameMatch;
-use App\Models\GameRoster;
+use App\Models\MatchRoster;
 use App\Models\MatchTeam;
 use App\Models\Participant;
 use App\Models\Team;
@@ -56,7 +56,7 @@ class PublicTeamsTest extends TestCase
             ->assertSee('Daftar peserta')
             ->assertSee('Andika Pratama')
             ->assertSee('Budi Santoso')
-            ->assertSee('Roster per game')
+            ->assertSee('Roster per pertandingan')
             ->assertSee('Mini Soccer')
             ->assertSee('Voli')
             ->assertDontSee('Mukbang roster')
@@ -79,12 +79,13 @@ class PublicTeamsTest extends TestCase
             ->assertDontSee('images/teams/achilles.jpg');
 
         $html = $this->get(route('tim.show', $achilles))->getContent();
-        $rosterStart = strpos($html, 'Roster per game');
+        $rosterStart = strpos($html, 'Roster per pertandingan');
         $matchStart = strpos($html, 'Pertandingan Achilles');
         $this->assertNotFalse($rosterStart);
         $this->assertNotFalse($matchStart);
         $rosterHtml = substr($html, $rosterStart, $matchStart - $rosterStart);
         $this->assertStringContainsString('Mini Soccer', $rosterHtml);
+        $this->assertStringContainsString('Voli', $rosterHtml);
         $this->assertStringNotContainsString('Mukbang', $rosterHtml);
     }
 
@@ -149,22 +150,6 @@ class PublicTeamsTest extends TestCase
             ]);
         }
 
-        GameRoster::query()->create([
-            'game_id' => $soccer->id,
-            'team_id' => $achilles->id,
-            'participant_id' => $andika->id,
-        ]);
-        GameRoster::query()->create([
-            'game_id' => $soccer->id,
-            'team_id' => $achilles->id,
-            'participant_id' => $budi->id,
-        ]);
-        GameRoster::query()->create([
-            'game_id' => $voli->id,
-            'team_id' => $achilles->id,
-            'participant_id' => $sari->id,
-        ]);
-
         $finished = GameMatch::query()->create([
             'game_id' => $soccer->id,
             'round_label' => 'Penyisihan',
@@ -220,6 +205,27 @@ class PublicTeamsTest extends TestCase
         foreach ([$achilles, $odysseus, $hercules, $perseus] as $index => $team) {
             MatchTeam::query()->create(['match_id' => $heat->id, 'team_id' => $team->id, 'sort_order' => $index + 1]);
         }
+
+        MatchRoster::query()->create([
+            'match_id' => $finished->id,
+            'team_id' => $achilles->id,
+            'participant_id' => $andika->id,
+        ]);
+        MatchRoster::query()->create([
+            'match_id' => $finished->id,
+            'team_id' => $achilles->id,
+            'participant_id' => $budi->id,
+        ]);
+        MatchRoster::query()->create([
+            'match_id' => $live->id,
+            'team_id' => $achilles->id,
+            'participant_id' => $andika->id,
+        ]);
+        MatchRoster::query()->create([
+            'match_id' => $upcoming->id,
+            'team_id' => $achilles->id,
+            'participant_id' => $sari->id,
+        ]);
 
         return [$achilles, $odysseus, $hercules];
     }

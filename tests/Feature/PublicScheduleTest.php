@@ -22,7 +22,8 @@ class PublicScheduleTest extends TestCase
             ->assertOk()
             ->assertSee('Jadwal')
             ->assertSee('Pertandingan')
-            ->assertSee('Jadwal pertandingan belum diisi panitia.')
+            ->assertDontSee('BELUM ADA JADWAL')
+            ->assertDontSee('Jadwal pertandingan belum diisi panitia.')
             ->assertDontSee('Halaman ini menyusul');
     }
 

@@ -4,14 +4,15 @@
 
 @section('content')
 <section class="bg-brand-card border border-white/5 rounded-2xl p-6">
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div>
             <h1 class="font-gaming text-2xl">MASTER GRUP</h1>
             <p class="text-xs text-gray-500 mt-1">Nama, kode, warna, motto, logo, dan banner grup. Hanya administrator.</p>
         </div>
         <a href="{{ route('panitia.grup.create') }}" class="px-5 py-2 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-sm font-semibold">Grup baru</a>
     </div>
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full min-w-[640px] text-sm">
         <thead class="text-xs uppercase text-gray-500">
             <tr><th class="text-left py-2">Grup</th><th>Kode</th><th>Urutan</th><th>Peserta</th><th></th></tr>
         </thead>
@@ -44,5 +45,6 @@
             @endforeach
         </tbody>
     </table>
+    </div>
 </section>
 @endsection

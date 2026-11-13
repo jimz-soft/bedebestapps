@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Game;
+use App\Models\GameGalleryPhoto;
 use App\Models\GameMatch;
 use App\Models\MatchTeam;
 use App\Models\Team;
@@ -22,17 +23,45 @@ class HomePageTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('BedeBest')
+            ->assertSee('BE DE BEST & SPARTA 2027')
+            ->assertDontSee('gold-glitter-title', false)
             ->assertSee('Achilles')
             ->assertSee('Odysseus')
             ->assertSee('Hercules')
             ->assertSee('Perseus')
             ->assertSee('Mini Soccer')
+            ->assertSee('id="nav-toggle"', false)
+            ->assertSee('id="mobile-nav"', false)
+            ->assertSee('Buka menu')
             ->assertSee('Jadwal pertandingan menyusul.')
+            ->assertSee('Gallery')
+            ->assertSee(route('gallery'), false)
+            ->assertSee('Buka gallery')
             ->assertDontSee('Empat grup: Achilles')
             ->assertDontSee('roster on')
             ->assertDontSee('roster off');
 
         $this->assertSame('Asia/Jakarta', config('app.timezone'));
+    }
+
+    public function test_home_gallery_section_shows_preview_photos(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        $soccer = Game::query()->where('slug', 'mini-soccer')->firstOrFail();
+
+        GameGalleryPhoto::query()->create([
+            'game_id' => $soccer->id,
+            'path' => 'gallery/games/'.$soccer->id.'/preview.jpg',
+            'caption' => 'Preview home',
+            'sort_order' => 1,
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('Mini Soccer')
+            ->assertSee('storage/gallery/games/'.$soccer->id.'/preview.jpg')
+            ->assertSee('Lihat lebih banyak foto')
+            ->assertSee(route('gallery'), false);
     }
 
     public function test_home_countdown_targets_nearest_upcoming_match(): void
@@ -65,10 +94,10 @@ class HomePageTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('<p id="countdown-days" class="font-gaming text-3xl text-brand-cyan">01</p>', false)
-            ->assertSee('<p id="countdown-hours" class="font-gaming text-3xl text-brand-cyan">06</p>', false)
-            ->assertSee('<p id="countdown-minutes" class="font-gaming text-3xl text-brand-cyan">30</p>', false)
-            ->assertSee('<p id="countdown-seconds" class="font-gaming text-3xl text-brand-cyan">00</p>', false)
+            ->assertSee('<p id="countdown-days" class="font-gaming text-4xl sm:text-5xl text-brand-cyan">01</p>', false)
+            ->assertSee('<p id="countdown-hours" class="font-gaming text-4xl sm:text-5xl text-brand-cyan">06</p>', false)
+            ->assertSee('<p id="countdown-minutes" class="font-gaming text-4xl sm:text-5xl text-brand-cyan">30</p>', false)
+            ->assertSee('<p id="countdown-seconds" class="font-gaming text-4xl sm:text-5xl text-brand-cyan">00</p>', false)
             ->assertSee('Detik')
             ->assertSee('Countdown menuju pertandingan berikutnya.')
             ->assertSee('Menuju · Mini Soccer · Final')

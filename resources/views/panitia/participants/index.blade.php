@@ -37,16 +37,36 @@
     </div>
     @error('is_captain')<p class="text-xs text-red-400">{{ $message }}</p>@enderror
 
-    <form method="POST" action="{{ route('panitia.participants.store') }}" class="bg-brand-card border border-white/5 rounded-2xl p-6 space-y-4">
+    <form method="POST" action="{{ route('panitia.participants.store') }}" enctype="multipart/form-data" class="bg-brand-card border border-white/5 rounded-2xl p-6 space-y-4">
         @csrf
         <input type="hidden" name="team_id" value="{{ $teamId }}">
-        <div class="grid md:grid-cols-3 gap-3 items-end">
-            <div class="md:col-span-2">
-                <label class="text-xs text-gray-500">Nama peserta baru</label>
-                <input name="name" required>
-            </div>
-            <label class="text-xs flex items-center gap-2 h-10"><input type="checkbox" name="is_captain" value="1" class="w-4"> Kapten</label>
+
+        <div>
+            <label class="text-xs text-gray-500">Nama peserta (bisa banyak sekaligus)</label>
+            <textarea name="names" rows="8" placeholder="Satu baris satu nama&#10;Andika Pratama&#10;Budi Santoso&#10;Citra Lestari">{{ old('names') }}</textarea>
+            <p class="text-[11px] text-gray-500 mt-2">Tempel banyak nama sekaligus: satu baris satu nama. Nama ganda di grup yang sama akan dilewati.</p>
+            @error('names')
+                <p class="text-xs text-red-400 mt-2">{{ $message }}</p>
+            @enderror
+            @error('name')
+                <p class="text-xs text-red-400 mt-2">{{ $message }}</p>
+            @enderror
         </div>
+
+        <div>
+            <label class="text-xs text-gray-500">Atau import dari file (.txt / .csv)</label>
+            <input type="file" name="import_file" accept=".txt,.csv,text/plain,text/csv">
+            <p class="text-[11px] text-gray-500 mt-2">Format CSV: kolom pertama = nama. Baris header `Nama` / `Name` boleh ada.</p>
+            @error('import_file')
+                <p class="text-xs text-red-400 mt-2">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <label class="text-xs flex items-center gap-2">
+            <input type="checkbox" name="is_captain" value="1" class="w-4" @checked(old('is_captain'))>
+            Tandai sebagai kapten (hanya jika menambah 1 nama)
+        </label>
+
         <button class="px-5 py-2 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-sm font-semibold">Tambah peserta</button>
     </form>
 </section>

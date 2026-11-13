@@ -26,6 +26,8 @@ class GameController extends Controller
             'game' => new Game([
                 'format' => 'head_to_head',
                 'requires_roster' => true,
+                'roster_min' => 1,
+                'roster_max' => 11,
                 'uses_period_score' => true,
                 'period_label' => 'Babak',
                 'period_count_default' => 2,
@@ -40,9 +42,7 @@ class GameController extends Controller
         $data = $this->validated($request);
         unset($data['banner']);
         $data['slug'] = $this->uniqueSlug($data['name']);
-        $data['requires_roster'] = $request->boolean('requires_roster');
-        $data['uses_period_score'] = $request->boolean('uses_period_score');
-        $data['is_active'] = $request->boolean('is_active');
+        $data = $this->normalizeFlags($request, $data);
 
         if ($request->hasFile('banner')) {
             $data['banner_path'] = Media::store($request->file('banner'), 'banners/games');
@@ -62,9 +62,7 @@ class GameController extends Controller
     {
         $data = $this->validated($request);
         unset($data['banner']);
-        $data['requires_roster'] = $request->boolean('requires_roster');
-        $data['uses_period_score'] = $request->boolean('uses_period_score');
-        $data['is_active'] = $request->boolean('is_active');
+        $data = $this->normalizeFlags($request, $data);
 
         if ($request->hasFile('banner')) {
             $data['banner_path'] = Media::store($request->file('banner'), 'banners/games', $game->banner_path);
@@ -87,10 +85,14 @@ class GameController extends Controller
      */
     private function validated(Request $request): array
     {
+        $requiresRoster = $request->boolean('requires_roster');
+
         return $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'format' => ['required', Rule::in(['head_to_head', 'round_robin', 'heat'])],
             'requires_roster' => ['nullable', 'boolean'],
+            'roster_min' => [$requiresRoster ? 'required' : 'nullable', 'integer', 'min:0', 'max:50'],
+            'roster_max' => [$requiresRoster ? 'required' : 'nullable', 'integer', 'min:1', 'max:50', 'gte:roster_min'],
             'uses_period_score' => ['nullable', 'boolean'],
             'period_label' => ['nullable', 'string', 'max:30'],
             'period_count_default' => ['nullable', 'integer', 'min:1', 'max:9'],
@@ -100,6 +102,24 @@ class GameController extends Controller
             'banner' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             'is_active' => ['nullable', 'boolean'],
         ]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function normalizeFlags(Request $request, array $data): array
+    {
+        $data['requires_roster'] = $request->boolean('requires_roster');
+        $data['uses_period_score'] = $request->boolean('uses_period_score');
+        $data['is_active'] = $request->boolean('is_active');
+
+        if (! $data['requires_roster']) {
+            $data['roster_min'] = null;
+            $data['roster_max'] = null;
+        }
+
+        return $data;
     }
 
     private function uniqueSlug(string $name): string
