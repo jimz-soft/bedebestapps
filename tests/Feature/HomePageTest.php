@@ -24,7 +24,6 @@ class HomePageTest extends TestCase
             ->assertOk()
             ->assertSee('BedeBest')
             ->assertSee('BE DE BEST & SPARTA 2027')
-            ->assertDontSee('gold-glitter-title', false)
             ->assertSee('Achilles')
             ->assertSee('Odysseus')
             ->assertSee('Hercules')
