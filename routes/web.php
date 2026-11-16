@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BaganController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\GamesController;
 use App\Http\Controllers\HomeController;
@@ -41,6 +42,11 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profil-akun', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profil-akun/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+});
 
 Route::middleware(['auth', 'pic'])->prefix('akun')->name('pic.')->group(function () {
     Route::get('/', fn () => redirect()->route('pic.jadwal'))->name('home');

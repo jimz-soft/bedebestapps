@@ -59,11 +59,13 @@
     <div id="sidebar-backdrop" class="hidden md:hidden fixed inset-0 z-40 bg-black/60"></div>
     <aside id="app-sidebar" class="bg-[#0a0a0f] md:bg-black/40 border-r border-white/10 p-6">
         <p class="font-gaming text-lg mb-8 hidden md:block">BEDEBEST<span class="text-brand-purple">.</span></p>
-        <p class="text-[10px] uppercase text-brand-purple tracking-widest mb-3">{{ auth()->user()?->team?->name ?? 'Grup' }}</p>
+        <p class="text-[10px] uppercase text-brand-purple tracking-widest mb-1">{{ auth()->user()?->team?->name ?? 'Grup' }}</p>
+        <p class="text-xs text-gray-400 mb-3 truncate" title="{{ auth()->user()?->name }}">{{ auth()->user()?->name }}</p>
         <nav class="space-y-2 text-sm">
             <a href="{{ route('pic.jadwal') }}" class="block {{ request()->routeIs('pic.jadwal') ? 'text-brand-gold' : 'text-gray-400 hover:text-brand-gold' }}">Jadwal</a>
             <a href="{{ route('pic.profil') }}" class="block {{ request()->routeIs('pic.profil') ? 'text-brand-gold' : 'text-gray-400 hover:text-brand-gold' }}">Profil tim</a>
             <a href="{{ route('pic.rosters.edit') }}" class="block {{ request()->routeIs('pic.rosters.*') ? 'text-brand-gold' : 'text-gray-400 hover:text-brand-gold' }}">Pilih roster</a>
+            <a href="{{ route('profile.edit') }}" class="block {{ request()->routeIs('profile.*') ? 'text-brand-gold' : 'text-gray-400 hover:text-brand-gold' }}">Akun saya</a>
             <a href="{{ route('home') }}" class="block text-brand-cyan pt-4">Lihat situs publik</a>
             <form method="POST" action="{{ route('logout') }}" class="pt-2">
                 @csrf
@@ -92,6 +94,7 @@
     </main>
 </div>
 @yield('scripts')
+@include('partials.confirm-dialog')
 <script>
 (function () {
     const button = document.getElementById('sidebar-toggle');

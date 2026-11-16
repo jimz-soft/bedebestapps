@@ -76,8 +76,8 @@
             <p class="text-[11px] text-gray-500">Keterangan wajib jika bonus lebih dari 0. Poin ranking diketik di sini, bukan dari master game.</p>
         </div>
         <div class="flex flex-wrap gap-3">
-            <button class="px-5 py-2 rounded-full bg-white/10 text-sm">Simpan skor & poin</button>
-            <button name="intent" value="finish" class="px-5 py-2 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-sm font-semibold">Flag pertandingan selesai</button>
+            <button type="submit" class="px-5 py-2 rounded-full bg-white/10 text-sm" data-confirm-title="Simpan skor" data-confirm="Skor dan poin akan disimpan. Status Upcoming otomatis jadi Live. Lanjutkan?" data-confirm-action="Ya, simpan skor">Simpan skor & poin</button>
+            <button type="submit" name="intent" value="finish" class="px-5 py-2 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-sm font-semibold" data-confirm-title="Flag selesai" data-confirm="Pertandingan akan ditandai selesai dan hasilnya dikunci sebagai final. Lanjutkan?" data-confirm-action="Ya, flag selesai" data-confirm-tone="danger">Flag pertandingan selesai</button>
         </div>
     </form>
 

@@ -13,7 +13,7 @@
         <a href="{{ route('gallery.show', $game) }}" target="_blank" class="text-sm text-brand-cyan">Lihat di publik →</a>
     </div>
 
-    <form method="POST" action="{{ route('panitia.gallery.store', $game) }}" enctype="multipart/form-data" class="bg-brand-card border border-white/5 rounded-2xl p-6 space-y-4 max-w-3xl">
+    <form method="POST" action="{{ route('panitia.gallery.store', $game) }}" enctype="multipart/form-data" class="bg-brand-card border border-white/5 rounded-2xl p-6 space-y-4 max-w-3xl" data-confirm-title="Unggah foto" data-confirm="Foto terpilih akan diunggah ke gallery game ini dan tampil di situs publik. Lanjutkan?" data-confirm-action="Ya, unggah">
         @csrf
         <div>
             <label class="text-xs text-gray-500">Foto</label>
@@ -28,7 +28,7 @@
                 <img src="{{ $photo->url() }}" alt="{{ $photo->caption ?: $game->name }}" class="w-full aspect-video object-cover">
                 <div class="p-4 flex items-center justify-between gap-3">
                     <p class="text-xs text-gray-500 truncate">{{ $photo->caption ?: 'Tanpa caption' }}</p>
-                    <form method="POST" action="{{ route('panitia.gallery.destroy', [$game, $photo]) }}" onsubmit="return confirm('Hapus foto ini?')">
+                    <form method="POST" action="{{ route('panitia.gallery.destroy', [$game, $photo]) }}" data-confirm-title="Hapus foto" data-confirm="Foto ini akan dihapus permanen dari gallery. Lanjutkan?" data-confirm-action="Ya, hapus" data-confirm-tone="danger">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-xs text-red-400 hover:text-red-300">Hapus</button>

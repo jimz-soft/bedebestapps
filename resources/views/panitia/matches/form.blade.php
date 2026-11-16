@@ -5,7 +5,7 @@
 @section('content')
 <section class="bg-brand-card border border-white/5 rounded-2xl p-6 max-w-3xl">
     <h1 class="font-gaming text-2xl mb-6">{{ $match->exists ? 'UBAH JADWAL' : 'JADWAL BARU' }}</h1>
-    <form method="POST" action="{{ $match->exists ? route('panitia.matches.update', $match) : route('panitia.matches.store') }}" class="space-y-4">
+    <form method="POST" action="{{ $match->exists ? route('panitia.matches.update', $match) : route('panitia.matches.store') }}" class="space-y-4" data-confirm-title="Simpan jadwal" data-confirm="Jadwal akan disimpan dan langsung tampil di situs publik. Lanjutkan?" data-confirm-action="Ya, simpan jadwal">
         @csrf
         @if ($match->exists)
             @method('PUT')
