@@ -34,6 +34,25 @@ class PublicGamesTest extends TestCase
             ->assertDontSee('Halaman ini menyusul');
     }
 
+    public function test_public_games_page_keeps_bullet_and_numbered_lists(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        $game = Game::query()->where('slug', 'mini-soccer')->firstOrFail();
+        $game->update([
+            'rules_html' => '<ul><li>Poin satu</li><li>Poin dua</li></ul><ol><li>Langkah satu</li><li>Langkah dua</li></ol>',
+        ]);
+
+        $this->get(route('games'))
+            ->assertOk()
+            ->assertSee('<ul>', false)
+            ->assertSee('<ol>', false)
+            ->assertSee('Poin satu')
+            ->assertSee('Langkah satu')
+            ->assertSee('More info')
+            ->assertSee('list-style-type: disc', false)
+            ->assertSee('list-style-type: decimal', false);
+    }
+
     public function test_inactive_games_are_hidden_and_banners_render(): void
     {
         $this->seed(DatabaseSeeder::class);

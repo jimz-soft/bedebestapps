@@ -5,7 +5,15 @@
 @section('content')
 <section class="bg-brand-card border border-white/5 rounded-2xl p-6 max-w-3xl">
     <h1 class="font-gaming text-2xl mb-6">{{ $game->exists ? 'UBAH GAME' : 'GAME BARU' }}</h1>
-    <form method="POST" action="{{ $game->exists ? route('panitia.games.update', $game) : route('panitia.games.store') }}" enctype="multipart/form-data" class="space-y-4">
+    <form
+        method="POST"
+        action="{{ $game->exists ? route('panitia.games.update', $game) : route('panitia.games.store') }}"
+        enctype="multipart/form-data"
+        class="space-y-4"
+        data-confirm-title="{{ $game->exists ? 'Ubah game' : 'Simpan game baru' }}"
+        data-confirm="{{ $game->exists ? 'Perubahan data game akan disimpan. Lanjutkan?' : 'Game baru akan dibuat dan bisa dipakai di jadwal. Lanjutkan?' }}"
+        data-confirm-action="{{ $game->exists ? 'Ya, simpan perubahan' : 'Ya, buat game' }}"
+    >
         @csrf
         @if ($game->exists)
             @method('PUT')
