@@ -3,7 +3,7 @@
     $showSets = $showSets ?? false;
 @endphp
 <h3 class="text-xs uppercase tracking-widest text-gray-500 mb-3 {{ $game->format === 'head_to_head' ? 'mt-4' : '' }}">Klasemen {{ $game->name }}</h3>
-<p class="text-xs text-gray-500 mb-3">Total = poin games + Poin Supporter (keduanya diketik panitia, cabang ini saja).</p>
+<p class="text-xs text-gray-500 mb-3">Total = poin games + Poin Supporter</p>
 <div class="overflow-x-auto mb-2">
     <table class="w-full min-w-[640px] text-sm bg-brand-card border border-white/5 rounded-2xl overflow-hidden">
         <thead>
