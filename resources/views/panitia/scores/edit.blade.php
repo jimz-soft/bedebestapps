@@ -6,7 +6,7 @@
 <section class="bg-brand-card border border-white/5 rounded-2xl p-6">
     <h1 class="font-gaming text-2xl mb-2">INPUT SKOR & POIN</h1>
     <p class="text-sm text-gray-400 mb-2">{{ $match->game->name }} · {{ $match->round_label }} · {{ $match->matchTeams->pluck('team.name')->join(' vs ') }}</p>
-    <p class="text-xs text-gray-500 mb-6">Simpan skor agar tampil di beranda. Status Upcoming otomatis jadi Live. Poin personil dan bonus pemenang ikut tersimpan lewat tombol simpan atau flag selesai. Pertandingan yang sudah selesai tetap bisa diubah poinnya.</p>
+    <p class="text-xs text-gray-500 mb-6">Simpan skor agar tampil di beranda. Status Upcoming otomatis jadi Live. Poin Supporter dan bonus pemenang ikut tersimpan lewat tombol simpan atau flag selesai. Pertandingan yang sudah selesai tetap bisa diubah poinnya.</p>
     <form method="POST" action="{{ route('panitia.scores.update', $match) }}" class="space-y-8">
         @csrf
         @method('PUT')
@@ -46,13 +46,13 @@
         @endif
 
         <div>
-            <h2 class="font-gaming mb-3">Poin games, personil, dan bonus</h2>
+            <h2 class="font-gaming mb-3">Poin games, Poin Supporter, dan bonus</h2>
             @foreach ($match->matchTeams as $side)
                 <div class="bg-black/20 rounded-xl p-4 mb-4 {{ $side->isWinner() ? 'border border-brand-gold/30' : '' }}">
                     <p class="font-gaming mb-3 inline-flex items-center gap-1">{{ $side->team->name }} <x-winner-star :side="$side" /></p>
                     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div><label class="text-xs text-gray-500">Poin games</label><input type="number" min="0" name="teams[{{ $side->id }}][points_awarded]" value="{{ old('teams.'.$side->id.'.points_awarded', $side->points_awarded) }}"></div>
-                        <div><label class="text-xs text-gray-500">Poin personil</label><input type="number" min="0" name="teams[{{ $side->id }}][poin_personil]" value="{{ old('teams.'.$side->id.'.poin_personil', $side->poin_personil) }}"></div>
+                        <div><label class="text-xs text-gray-500">Poin Supporter</label><input type="number" min="0" name="teams[{{ $side->id }}][poin_personil]" value="{{ old('teams.'.$side->id.'.poin_personil', $side->poin_personil) }}"></div>
                         <div><label class="text-xs text-gray-500">Bonus pemenang</label><input type="number" min="0" name="teams[{{ $side->id }}][bonus_pemenang]" value="{{ old('teams.'.$side->id.'.bonus_pemenang', $side->bonus_pemenang) }}"></div>
                         <div>
                             <label class="text-xs text-gray-500">Hasil</label>

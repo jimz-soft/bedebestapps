@@ -34,7 +34,7 @@
                     </div>
                     <div>
                         <p class="font-gaming text-2xl">{{ $poin_personil }}</p>
-                        <p class="text-gray-500 text-xs uppercase">Poin personil</p>
+                        <p class="text-gray-500 text-xs uppercase">Poin Supporter</p>
                     </div>
                 </div>
             </div>
@@ -42,7 +42,7 @@
     </section>
 
     <h2 class="font-gaming uppercase mb-2">Daftar peserta</h2>
-    <p class="text-xs text-gray-500 mb-4">Diisi hanya oleh panitia. Kapten ditandai administrator.</p>
+    <p class="text-xs text-gray-500 mb-4">Daftar Nama Peserta</p>
     <ul class="bg-brand-card border border-white/5 rounded-2xl divide-y divide-white/5 mb-10">
         @forelse ($team->participants as $participant)
             <li class="px-5 py-3 flex flex-wrap items-center justify-between gap-2">

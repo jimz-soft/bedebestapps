@@ -5,7 +5,7 @@
 @section('content')
 <section class="bg-brand-card border border-white/5 rounded-2xl p-6">
     <h1 class="font-gaming text-2xl mb-2">SKOR & POIN</h1>
-    <p class="text-xs text-gray-500 mb-6">Isi skor babak, poin games, poin personil, dan bonus pemenang (wajib ada keterangan).</p>
+    <p class="text-xs text-gray-500 mb-6">Isi skor babak, poin games, Poin Supporter, dan bonus pemenang (wajib ada keterangan).</p>
     <div class="overflow-x-auto">
     <table class="w-full min-w-[640px] text-sm">
         <thead class="text-xs uppercase text-gray-500">

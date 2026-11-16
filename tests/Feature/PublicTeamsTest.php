@@ -36,7 +36,7 @@ class PublicTeamsTest extends TestCase
             ->assertSee('8 peserta')
             ->assertSee('2 kapten')
             ->assertSee('Games 46')
-            ->assertSee('Personil 12')
+            ->assertSee('Poin Supporter 12')
             ->assertSee(route('tim.show', 'achilles'), false)
             ->assertDontSee('Halaman ini menyusul')
             ->assertDontSee('images/teams/achilles.jpg');
