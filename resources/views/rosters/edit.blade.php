@@ -163,7 +163,7 @@
                         <span class="roster-status text-[10px] uppercase tracking-wider {{ $selected ? 'text-brand-cyan' : 'text-gray-600' }}">{{ $selected ? 'Dipilih' : 'Ketuk untuk pilih' }}</span>
                     </label>
                 @empty
-                    <p class="text-sm text-gray-500">Belum ada peserta di grup ini. Administrator mengisi nama di menu Peserta & kapten, baru roster bisa dipilih.</p>
+                    <p class="text-sm text-gray-500">Belum ada peserta di grup ini. Administrator mengisi nama di menu Peserta & Captain, baru roster bisa dipilih.</p>
                 @endforelse
             </div>
 

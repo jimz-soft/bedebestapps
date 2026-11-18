@@ -50,7 +50,7 @@
             <input type="checkbox" name="is_active" value="1" class="w-4" @checked(old('is_active', $user->exists ? $user->is_active : true))>
             Aktif
         </label>
-        <p class="text-[11px] text-gray-500">Nonaktifkan centang Aktif untuk menonaktifkan akun. Administrator mengisi master game, jadwal, peserta, kapten, skor, dan poin.</p>
+        <p class="text-[11px] text-gray-500">Nonaktifkan centang Aktif untuk menonaktifkan akun. Administrator mengisi master game, jadwal, peserta, Captain, skor, dan poin.</p>
         <button class="px-5 py-2 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-sm font-semibold">Simpan</button>
     </form>
 </section>

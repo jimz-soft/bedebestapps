@@ -214,7 +214,7 @@ class ParticipantController extends Controller
 
             if ($exists) {
                 throw ValidationException::withMessages([
-                    'leadership' => 'Setiap tim hanya boleh punya 1 kapten.',
+                    'leadership' => 'Setiap tim hanya boleh punya 1 Captain.',
                 ]);
             }
         }
@@ -228,7 +228,7 @@ class ParticipantController extends Controller
 
             if ($exists) {
                 throw ValidationException::withMessages([
-                    'leadership' => 'Setiap tim hanya boleh punya 1 co-kapten.',
+                    'leadership' => 'Setiap tim hanya boleh punya 1 Vice Captain.',
                 ]);
             }
         }

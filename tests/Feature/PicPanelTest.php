@@ -72,7 +72,7 @@ class PicPanelTest extends TestCase
             ->assertOk()
             ->assertSee('ACHILLES')
             ->assertSee('Andika Pratama')
-            ->assertSee('Kapten')
+            ->assertSee('Captain')
             ->assertDontSee('Citra Lestari')
             ->assertSee('Mini Soccer')
             ->assertDontSee('Mukbang');

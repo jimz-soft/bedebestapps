@@ -16,7 +16,7 @@
         <a href="{{ route('panitia.grup.index') }}" class="px-5 py-2 rounded-full bg-white/10 text-sm">Master grup</a>
         <a href="{{ route('panitia.games.index') }}" class="px-5 py-2 rounded-full bg-white/10 text-sm">Master games</a>
         <a href="{{ route('panitia.matches.index') }}" class="px-5 py-2 rounded-full bg-white/10 text-sm">Jadwal</a>
-        <a href="{{ route('panitia.participants.index') }}" class="px-5 py-2 rounded-full bg-white/10 text-sm">Peserta & kapten</a>
+        <a href="{{ route('panitia.participants.index') }}" class="px-5 py-2 rounded-full bg-white/10 text-sm">Peserta & Captain</a>
         <a href="{{ route('panitia.rosters.edit') }}" class="px-5 py-2 rounded-full bg-white/10 text-sm">Pilih roster</a>
         <a href="{{ route('panitia.scores.index') }}" class="px-5 py-2 rounded-full bg-white/10 text-sm">Skor & poin</a>
         <a href="{{ route('panitia.gallery.index') }}" class="px-5 py-2 rounded-full bg-white/10 text-sm">Gallery</a>

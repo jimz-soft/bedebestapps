@@ -40,11 +40,11 @@ class Participant extends Model
     public function leadershipLabel(): ?string
     {
         if ($this->is_captain) {
-            return 'Kapten';
+            return 'Captain';
         }
 
         if ($this->is_co_captain) {
-            return 'Co-Kapten';
+            return 'Vice Captain';
         }
 
         return null;

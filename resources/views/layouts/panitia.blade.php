@@ -72,7 +72,7 @@
             <a href="{{ route('panitia.gallery.index') }}" class="block {{ request()->routeIs('panitia.gallery.*') ? 'text-brand-gold' : 'text-gray-400 hover:text-brand-gold' }}">Gallery</a>
             <a href="{{ route('panitia.games.index') }}" class="block {{ request()->routeIs('panitia.games.*') ? 'text-brand-gold' : 'text-gray-400 hover:text-brand-gold' }}">Master games</a>
             <a href="{{ route('panitia.matches.index') }}" class="block {{ request()->routeIs('panitia.matches.*') ? 'text-brand-gold' : 'text-gray-400 hover:text-brand-gold' }}">Jadwal</a>
-            <a href="{{ route('panitia.participants.index') }}" class="block {{ request()->routeIs('panitia.participants.*') ? 'text-brand-gold' : 'text-gray-400 hover:text-brand-gold' }}">Peserta & kapten</a>
+            <a href="{{ route('panitia.participants.index') }}" class="block {{ request()->routeIs('panitia.participants.*') ? 'text-brand-gold' : 'text-gray-400 hover:text-brand-gold' }}">Peserta & Captain</a>
             <a href="{{ route('panitia.rosters.edit') }}" class="block {{ request()->routeIs('panitia.rosters.*') ? 'text-brand-gold' : 'text-gray-400 hover:text-brand-gold' }}">Pilih roster</a>
             <a href="{{ route('panitia.scores.index') }}" class="block {{ request()->routeIs('panitia.scores.*') ? 'text-brand-gold' : 'text-gray-400 hover:text-brand-gold' }}">Skor & poin</a>
             <a href="{{ route('home') }}" class="block text-brand-cyan pt-4">Lihat situs publik</a>

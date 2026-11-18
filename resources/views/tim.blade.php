@@ -18,7 +18,7 @@
                 <div>
                     <h2 class="font-gaming text-2xl">{{ $team->name }}</h2>
                     <p class="text-sm text-gray-400 mt-1">Peringkat <span class="font-gaming {{ $rankColor }}">#{{ $group['rank'] }}</span> · {{ $group['total'] }} poin</p>
-                    <p class="text-xs text-gray-500 mt-2">{{ $group['peserta'] }} peserta · {{ $group['kapten'] }} kapten · {{ $group['co_kapten'] }} co-kapten · Games {{ $group['poin_games'] }} · Poin Supporter {{ $group['poin_personil'] }}</p>
+                    <p class="text-xs text-gray-500 mt-2">{{ $group['peserta'] }} peserta · {{ $group['kapten'] }} Captain · {{ $group['co_kapten'] }} Vice Captain · Games {{ $group['poin_games'] }} · Poin Supporter {{ $group['poin_personil'] }}</p>
                 </div>
             </a>
         @empty

@@ -5,8 +5,8 @@
 @section('content')
 <section class="space-y-8">
     <div>
-        <h1 class="font-gaming text-2xl mb-2">PESERTA & KAPTEN</h1>
-        <p class="text-xs text-gray-500">Setiap peserta bisa bermain. Per tim: 1 kapten dan 1 co-kapten. Hanya panitia yang bisa mengatur. Siapa yang main di cabang tertentu dipilih di menu Pilih roster.</p>
+        <h1 class="font-gaming text-2xl mb-2">PESERTA & CAPTAIN</h1>
+        <p class="text-xs text-gray-500">Setiap peserta bisa bermain. Per tim: 1 Captain dan 1 Vice Captain. Hanya panitia yang bisa mengatur. Siapa yang main di cabang tertentu dipilih di menu Pilih roster.</p>
     </div>
     <form method="GET" class="max-w-xs">
         <label class="text-xs text-gray-500">Pilih tim</label>
@@ -31,8 +31,8 @@
                         <label class="text-xs text-gray-500">Peran</label>
                         <select name="leadership">
                             <option value="" @selected($currentLeadership === '')>Peserta</option>
-                            <option value="captain" @selected($currentLeadership === 'captain')>Kapten</option>
-                            <option value="co_captain" @selected($currentLeadership === 'co_captain')>Co-Kapten</option>
+                            <option value="captain" @selected($currentLeadership === 'captain')>Captain</option>
+                            <option value="co_captain" @selected($currentLeadership === 'co_captain')>Vice Captain</option>
                         </select>
                     </div>
                     <button class="text-brand-cyan text-sm justify-self-end">Simpan</button>
@@ -76,8 +76,8 @@
             <label class="text-xs text-gray-500">Peran (hanya jika menambah 1 nama)</label>
             <select name="leadership">
                 <option value="" @selected(old('leadership') === null || old('leadership') === '')>Peserta</option>
-                <option value="captain" @selected(old('leadership') === 'captain')>Kapten</option>
-                <option value="co_captain" @selected(old('leadership') === 'co_captain')>Co-Kapten</option>
+                <option value="captain" @selected(old('leadership') === 'captain')>Captain</option>
+                <option value="co_captain" @selected(old('leadership') === 'co_captain')>Vice Captain</option>
             </select>
         </div>
 

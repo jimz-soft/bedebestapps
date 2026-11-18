@@ -19,12 +19,12 @@
             <x-team-avatar :team="$team" size="w-28 h-28" class="bg-brand-dark shadow-[0_0_0_4px_#12121c]" />
             <div class="text-center md:text-left pb-1">
                 <h1 class="font-gaming text-4xl text-brand-gold">{{ strtoupper($team->name) }}</h1>
-                <p class="text-gray-400 mt-2">Peringkat <span class="font-gaming {{ $rankColor }}">#{{ $rank }}</span> · {{ $team->participants->count() }} peserta · {{ $captain ? 1 : 0 }} kapten · {{ $coCaptain ? 1 : 0 }} co-kapten</p>
+                <p class="text-gray-400 mt-2">Peringkat <span class="font-gaming {{ $rankColor }}">#{{ $rank }}</span> · {{ $team->participants->count() }} peserta · {{ $captain ? 1 : 0 }} Captain · {{ $coCaptain ? 1 : 0 }} Vice Captain</p>
                 @if ($captain || $coCaptain)
                     <p class="text-sm text-gray-500 mt-1">
-                        @if ($captain)Kapten: {{ $captain->name }}@endif
+                        @if ($captain)Captain: {{ $captain->name }}@endif
                         @if ($captain && $coCaptain) · @endif
-                        @if ($coCaptain)Co-Kapten: {{ $coCaptain->name }}@endif
+                        @if ($coCaptain)Vice Captain: {{ $coCaptain->name }}@endif
                     </p>
                 @endif
                 <div class="flex gap-6 mt-4 justify-center md:justify-start text-sm">
