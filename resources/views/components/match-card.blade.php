@@ -64,7 +64,6 @@
         </div>
         <div class="text-right">
             <p class="font-gaming font-bold">{{ strtoupper($match->game->name) }}</p>
-            <span class="text-[10px] text-green-400">{{ strtoupper($match->location ?: $match->round_label) }}</span>
         </div>
     @endif
 </article>
