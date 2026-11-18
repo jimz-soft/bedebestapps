@@ -11,7 +11,7 @@
     @endphp
 
     <section class="mb-10 overflow-hidden rounded-2xl border border-white/5 bg-brand-card">
-        <div class="relative h-52 md:h-72 bg-gradient-to-br from-brand-purple/40 via-brand-dark to-brand-cyan/30">
+        <div class="relative h-72 md:h-[28rem] bg-gradient-to-br from-brand-purple/40 via-brand-dark to-brand-cyan/30">
             <img src="{{ $team->bannerUrl() }}" alt="Banner {{ $team->name }}" class="absolute inset-0 w-full h-full object-cover object-[center_18%]">
             <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-brand-card via-brand-card/80 to-transparent"></div>
         </div>
