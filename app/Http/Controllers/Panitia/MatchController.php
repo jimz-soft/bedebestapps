@@ -45,6 +45,7 @@ class MatchController extends Controller
             'round_label' => $data['round_label'],
             'scheduled_at' => $data['scheduled_at'],
             'location' => $data['location'] ?? null,
+            'zoom_link' => $data['zoom_link'] ?? null,
             'status' => $data['status'],
             'notes' => $data['notes'] ?? null,
         ]);
@@ -77,6 +78,7 @@ class MatchController extends Controller
             'round_label' => $data['round_label'],
             'scheduled_at' => $data['scheduled_at'],
             'location' => $data['location'] ?? null,
+            'zoom_link' => $data['zoom_link'] ?? null,
             'status' => $data['status'],
             'notes' => $data['notes'] ?? null,
         ]);
@@ -100,16 +102,23 @@ class MatchController extends Controller
      */
     private function validated(Request $request): array
     {
-        return $request->validate([
+        $data = $request->validate([
             'game_id' => ['required', 'exists:games,id'],
             'round_label' => ['required', 'string', 'max:80'],
             'scheduled_at' => ['required', 'date'],
             'location' => ['nullable', 'string', 'max:120'],
+            'zoom_link' => ['nullable', 'url', 'max:500'],
             'status' => ['required', Rule::in(['upcoming', 'live', 'selesai'])],
             'notes' => ['nullable', 'string'],
             'team_ids' => ['required', 'array', 'min:2'],
             'team_ids.*' => ['exists:teams,id'],
         ]);
+
+        if (($data['zoom_link'] ?? null) === '') {
+            $data['zoom_link'] = null;
+        }
+
+        return $data;
     }
 
     /**

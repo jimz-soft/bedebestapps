@@ -34,6 +34,14 @@
             </div>
         </div>
         <div>
+            <label class="text-xs text-gray-500">Link Zoom (opsional)</label>
+            <input type="url" name="zoom_link" value="{{ old('zoom_link', $match->zoom_link) }}" placeholder="https://zoom.us/j/...">
+            <p class="text-[11px] text-gray-500 mt-2">Jika diisi, tombol “Tonton di Zoom” muncul di jadwal publik.</p>
+            @error('zoom_link')
+                <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+        <div>
             <p class="text-xs text-gray-500 mb-2">Tim peserta (duel: 2 tim, lomba bersama: 2 atau lebih)</p>
             <div class="grid sm:grid-cols-2 gap-2">
                 @foreach ($teams as $team)

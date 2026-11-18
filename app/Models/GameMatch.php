@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'round_label',
     'scheduled_at',
     'location',
+    'zoom_link',
     'status',
     'banner_path',
     'notes',
@@ -146,6 +147,11 @@ class GameMatch extends Model
     public function isDuel(): bool
     {
         return $this->matchTeams->count() === 2 && $this->game?->format !== 'heat';
+    }
+
+    public function hasZoomLink(): bool
+    {
+        return filled($this->zoom_link);
     }
 
     public function scheduleStamp(): string

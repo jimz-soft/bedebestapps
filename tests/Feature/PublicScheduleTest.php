@@ -60,6 +60,7 @@ class PublicScheduleTest extends TestCase
             'round_label' => 'Lomba bersama',
             'scheduled_at' => '2026-11-21 18:00:00',
             'location' => 'Aula utama',
+            'zoom_link' => 'https://zoom.us/j/1234567890',
             'status' => 'upcoming',
         ]);
         foreach ($teams as $index => $team) {
@@ -81,7 +82,10 @@ class PublicScheduleTest extends TestCase
             ->assertSee('18:00')
             ->assertSee('21 Nov · Aula utama')
             ->assertSee('MUKBANG')
-            ->assertSee('Lomba bersama');
+            ->assertSee('Lomba bersama')
+            ->assertSee('Watch on')
+            ->assertSee('Zoom')
+            ->assertSee('https://zoom.us/j/1234567890', false);
 
         $this->get(route('jadwal', ['game' => 'mukbang']))
             ->assertOk()

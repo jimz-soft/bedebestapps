@@ -123,11 +123,13 @@ class AdministratorPanelTest extends TestCase
             'round_label' => 'Semifinal',
             'scheduled_at' => '2026-11-21 09:00:00',
             'location' => 'Lapangan',
+            'zoom_link' => 'https://zoom.us/j/987654321',
             'status' => 'live',
             'team_ids' => $teams->pluck('id')->all(),
         ])->assertRedirect(route('panitia.matches.index'));
 
         $match = GameMatch::query()->firstOrFail();
+        $this->assertSame('https://zoom.us/j/987654321', $match->zoom_link);
         $match->load('matchTeams');
         $period = $match->periods()->firstOrFail();
         $home = $match->matchTeams->firstWhere('team_id', $teams[0]->id);
