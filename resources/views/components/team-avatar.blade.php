@@ -10,12 +10,12 @@
     <img
         src="{{ $logo }}"
         alt="{{ $team->name }}"
-        {{ $attributes->merge(['class' => $classes.' object-cover']) }}
+        {{ $attributes->merge(['class' => $classes.' object-contain bg-brand-dark p-1']) }}
         @if ($border) style="{{ $border }}" @endif
     >
 @else
     <span
-        {{ $attributes->merge(['class' => $classes.' inline-flex items-center justify-center font-gaming text-[11px]']) }}
+        {{ $attributes->merge(['class' => $classes.' inline-flex items-center justify-center font-gaming text-[11px] bg-brand-dark']) }}
         @if ($border) style="{{ $border }}" @endif
     >{{ $team->code }}</span>
 @endif
