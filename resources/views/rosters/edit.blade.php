@@ -156,8 +156,8 @@
                         >
                         <span class="flex-1 min-w-0">
                             <span class="block font-medium">{{ $participant->name }}</span>
-                            @if ($participant->is_captain)
-                                <span class="text-[11px] text-gray-500">Kapten</span>
+                            @if ($participant->leadershipLabel())
+                                <span class="text-[11px] text-gray-500">{{ $participant->leadershipLabel() }}</span>
                             @endif
                         </span>
                         <span class="roster-status text-[10px] uppercase tracking-wider {{ $selected ? 'text-brand-cyan' : 'text-gray-600' }}">{{ $selected ? 'Dipilih' : 'Ketuk untuk pilih' }}</span>

@@ -8,6 +8,7 @@ use App\Models\Team;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -24,6 +25,7 @@ class ParticipantController extends Controller
             'participants' => Participant::query()
                 ->where('team_id', $teamId)
                 ->orderByDesc('is_captain')
+                ->orderByDesc('is_co_captain')
                 ->orderBy('name')
                 ->get(),
         ]);
@@ -36,7 +38,7 @@ class ParticipantController extends Controller
             'name' => ['nullable', 'string', 'max:100'],
             'names' => ['nullable', 'string'],
             'import_file' => ['nullable', 'file', 'mimes:txt,csv,text/plain', 'max:2048'],
-            'is_captain' => ['nullable', 'boolean'],
+            'leadership' => ['nullable', Rule::in(['captain', 'co_captain'])],
         ]);
 
         $teamId = (int) $data['team_id'];
@@ -63,10 +65,10 @@ class ParticipantController extends Controller
             ]);
         }
 
-        $markCaptain = $request->boolean('is_captain') && $toCreate->count() === 1;
+        $leadership = $toCreate->count() === 1 ? ($data['leadership'] ?? null) : null;
 
-        if ($markCaptain) {
-            $this->guardCaptainLimit($teamId, true);
+        if ($leadership !== null) {
+            $this->guardLeadershipLimit($teamId, $leadership);
         }
 
         foreach ($toCreate as $index => $name) {
@@ -75,7 +77,8 @@ class ParticipantController extends Controller
                 'name' => $name,
                 'is_player' => true,
                 'is_personil' => true,
-                'is_captain' => $markCaptain && $index === 0,
+                'is_captain' => $leadership === 'captain' && $index === 0,
+                'is_co_captain' => $leadership === 'co_captain' && $index === 0,
             ]);
         }
 
@@ -94,17 +97,18 @@ class ParticipantController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:100'],
-            'is_captain' => ['nullable', 'boolean'],
+            'leadership' => ['nullable', Rule::in(['captain', 'co_captain'])],
         ]);
 
-        $isCaptain = $request->boolean('is_captain');
-        $this->guardCaptainLimit($participant->team_id, $isCaptain, $participant->id);
+        $leadership = $data['leadership'] ?? null;
+        $this->guardLeadershipLimit($participant->team_id, $leadership, $participant->id);
 
         $participant->update([
             'name' => $data['name'],
             'is_player' => true,
             'is_personil' => true,
-            'is_captain' => $isCaptain,
+            'is_captain' => $leadership === 'captain',
+            'is_co_captain' => $leadership === 'co_captain',
         ]);
 
         return redirect()
@@ -195,22 +199,38 @@ class ParticipantController extends Controller
         return $names;
     }
 
-    private function guardCaptainLimit(int $teamId, bool $isCaptain, ?int $ignoreId = null): void
+    private function guardLeadershipLimit(int $teamId, ?string $leadership, ?int $ignoreId = null): void
     {
-        if (! $isCaptain) {
+        if ($leadership === null) {
             return;
         }
 
-        $captains = Participant::query()
-            ->where('team_id', $teamId)
-            ->where('is_captain', true)
-            ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
-            ->count();
+        if ($leadership === 'captain') {
+            $exists = Participant::query()
+                ->where('team_id', $teamId)
+                ->where('is_captain', true)
+                ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+                ->exists();
 
-        if ($captains >= 2) {
-            throw ValidationException::withMessages([
-                'is_captain' => 'Maksimal dua kapten per tim.',
-            ]);
+            if ($exists) {
+                throw ValidationException::withMessages([
+                    'leadership' => 'Setiap tim hanya boleh punya 1 kapten.',
+                ]);
+            }
+        }
+
+        if ($leadership === 'co_captain') {
+            $exists = Participant::query()
+                ->where('team_id', $teamId)
+                ->where('is_co_captain', true)
+                ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+                ->exists();
+
+            if ($exists) {
+                throw ValidationException::withMessages([
+                    'leadership' => 'Setiap tim hanya boleh punya 1 co-kapten.',
+                ]);
+            }
         }
     }
 }

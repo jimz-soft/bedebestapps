@@ -58,6 +58,7 @@
                 </p>
             @else
                 <p class="font-gaming text-3xl text-brand-cyan">{{ $match->scheduled_at?->format('H:i') ?? '--:--' }}</p>
+                <p class="text-xs text-gray-400">{{ $match->scheduleStamp() }}</p>
             @endif
             <p class="text-xs text-gray-400 uppercase mt-1">{{ $match->game->formatLabel() }} · {{ $sides->count() }} grup</p>
         </div>

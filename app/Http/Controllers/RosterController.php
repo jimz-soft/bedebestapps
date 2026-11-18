@@ -50,6 +50,7 @@ class RosterController extends Controller
         $participants = Participant::query()
             ->where('team_id', $team->id)
             ->orderByDesc('is_captain')
+            ->orderByDesc('is_co_captain')
             ->orderBy('name')
             ->get();
 

@@ -40,7 +40,6 @@
     <div class="max-w-5xl mx-auto roster-row">
         @foreach ($teams as $team)
             <article class="roster-card">
-                <p class="roster-mark">{{ strtoupper(substr($team->code, 0, 1)) }}</p>
                 <img class="roster-photo" src="{{ $team->bannerUrl() }}" alt="{{ $team->name }}">
                 <p class="roster-plate">{{ strtoupper($team->name) }}</p>
             </article>

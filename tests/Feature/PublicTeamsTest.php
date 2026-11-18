@@ -34,7 +34,8 @@ class PublicTeamsTest extends TestCase
             ->assertSee('58 poin')
             ->assertSee('54 poin')
             ->assertSee('8 peserta')
-            ->assertSee('2 kapten')
+            ->assertSee('1 kapten')
+            ->assertSee('1 co-kapten')
             ->assertSee('Games 46')
             ->assertSee('Poin Supporter 12')
             ->assertSee(route('tim.show', 'achilles'), false)
@@ -52,7 +53,8 @@ class PublicTeamsTest extends TestCase
             ->assertSee('ACHILLES')
             ->assertSee('Peringkat')
             ->assertSee('#2')
-            ->assertSee('Kapten: Andika Pratama · Sari Wulandari')
+            ->assertSee('Kapten: Andika Pratama')
+            ->assertSee('Co-Kapten: Sari Wulandari')
             ->assertSee('Daftar peserta')
             ->assertSee('Andika Pratama')
             ->assertSee('Budi Santoso')
@@ -122,13 +124,15 @@ class PublicTeamsTest extends TestCase
             'team_id' => $achilles->id,
             'name' => 'Andika Pratama',
             'is_captain' => true,
+            'is_co_captain' => false,
             'is_player' => true,
             'is_personil' => true,
         ]);
         $sari = Participant::query()->create([
             'team_id' => $achilles->id,
             'name' => 'Sari Wulandari',
-            'is_captain' => true,
+            'is_captain' => false,
+            'is_co_captain' => true,
             'is_player' => true,
             'is_personil' => true,
         ]);
@@ -136,6 +140,7 @@ class PublicTeamsTest extends TestCase
             'team_id' => $achilles->id,
             'name' => 'Budi Santoso',
             'is_captain' => false,
+            'is_co_captain' => false,
             'is_player' => true,
             'is_personil' => true,
         ]);
@@ -145,6 +150,7 @@ class PublicTeamsTest extends TestCase
                 'team_id' => $achilles->id,
                 'name' => $name,
                 'is_captain' => false,
+                'is_co_captain' => false,
                 'is_player' => true,
                 'is_personil' => true,
             ]);

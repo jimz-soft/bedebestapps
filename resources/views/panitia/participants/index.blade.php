@@ -6,7 +6,7 @@
 <section class="space-y-8">
     <div>
         <h1 class="font-gaming text-2xl mb-2">PESERTA & KAPTEN</h1>
-        <p class="text-xs text-gray-500">Setiap peserta bisa bermain. Cukup tandai kapten (maksimal dua per grup). Siapa yang main di cabang tertentu dipilih di menu Pilih roster.</p>
+        <p class="text-xs text-gray-500">Setiap peserta bisa bermain. Per tim: 1 kapten dan 1 co-kapten. Hanya panitia yang bisa mengatur. Siapa yang main di cabang tertentu dipilih di menu Pilih roster.</p>
     </div>
     <form method="GET" class="max-w-xs">
         <label class="text-xs text-gray-500">Pilih tim</label>
@@ -19,15 +19,25 @@
 
     <div class="space-y-3">
         @foreach ($participants as $participant)
+            @php
+                $currentLeadership = $participant->is_captain ? 'captain' : ($participant->is_co_captain ? 'co_captain' : '');
+            @endphp
             <div class="bg-brand-card border border-white/5 rounded-2xl p-4">
-                <form method="POST" action="{{ route('panitia.participants.update', $participant) }}" class="grid md:grid-cols-4 gap-3 items-center">
+                <form method="POST" action="{{ route('panitia.participants.update', $participant) }}" class="grid md:grid-cols-4 gap-3 items-center" data-confirm-title="Simpan peserta" data-confirm="Perubahan nama/peran peserta akan disimpan. Lanjutkan?" data-confirm-action="Ya, simpan">
                     @csrf
                     @method('PUT')
                     <input name="name" value="{{ $participant->name }}" class="md:col-span-2">
-                    <label class="text-xs flex items-center gap-2"><input type="checkbox" name="is_captain" value="1" class="w-4" @checked($participant->is_captain)> Kapten</label>
+                    <div>
+                        <label class="text-xs text-gray-500">Peran</label>
+                        <select name="leadership">
+                            <option value="" @selected($currentLeadership === '')>Peserta</option>
+                            <option value="captain" @selected($currentLeadership === 'captain')>Kapten</option>
+                            <option value="co_captain" @selected($currentLeadership === 'co_captain')>Co-Kapten</option>
+                        </select>
+                    </div>
                     <button class="text-brand-cyan text-sm justify-self-end">Simpan</button>
                 </form>
-                <form method="POST" action="{{ route('panitia.participants.destroy', $participant) }}" class="mt-2 text-right">
+                <form method="POST" action="{{ route('panitia.participants.destroy', $participant) }}" class="mt-2 text-right" data-confirm-title="Hapus peserta" data-confirm="Peserta ini akan dihapus dari tim. Lanjutkan?" data-confirm-action="Ya, hapus" data-confirm-tone="danger">
                     @csrf
                     @method('DELETE')
                     <button class="text-gray-500 text-xs">Hapus</button>
@@ -35,9 +45,9 @@
             </div>
         @endforeach
     </div>
-    @error('is_captain')<p class="text-xs text-red-400">{{ $message }}</p>@enderror
+    @error('leadership')<p class="text-xs text-red-400">{{ $message }}</p>@enderror
 
-    <form method="POST" action="{{ route('panitia.participants.store') }}" enctype="multipart/form-data" class="bg-brand-card border border-white/5 rounded-2xl p-6 space-y-4">
+    <form method="POST" action="{{ route('panitia.participants.store') }}" enctype="multipart/form-data" class="bg-brand-card border border-white/5 rounded-2xl p-6 space-y-4" data-confirm-title="Tambah peserta" data-confirm="Peserta baru akan ditambahkan ke tim ini. Lanjutkan?" data-confirm-action="Ya, tambah">
         @csrf
         <input type="hidden" name="team_id" value="{{ $teamId }}">
 
@@ -62,10 +72,14 @@
             @enderror
         </div>
 
-        <label class="text-xs flex items-center gap-2">
-            <input type="checkbox" name="is_captain" value="1" class="w-4" @checked(old('is_captain'))>
-            Tandai sebagai kapten (hanya jika menambah 1 nama)
-        </label>
+        <div class="max-w-xs">
+            <label class="text-xs text-gray-500">Peran (hanya jika menambah 1 nama)</label>
+            <select name="leadership">
+                <option value="" @selected(old('leadership') === null || old('leadership') === '')>Peserta</option>
+                <option value="captain" @selected(old('leadership') === 'captain')>Kapten</option>
+                <option value="co_captain" @selected(old('leadership') === 'co_captain')>Co-Kapten</option>
+            </select>
+        </div>
 
         <button class="px-5 py-2 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-sm font-semibold">Tambah peserta</button>
     </form>

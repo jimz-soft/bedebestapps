@@ -13,7 +13,7 @@ class TeamProfileController extends Controller
     public function show(Request $request): View
     {
         $team = $request->user()->team()->with([
-            'participants' => fn ($query) => $query->orderByDesc('is_captain')->orderBy('name'),
+            'participants' => fn ($query) => $query->orderByDesc('is_captain')->orderByDesc('is_co_captain')->orderBy('name'),
         ])->firstOrFail();
 
         $matches = GameMatch::query()

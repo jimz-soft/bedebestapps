@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'is_player',
     'is_personil',
     'is_captain',
+    'is_co_captain',
 ])]
 class Participant extends Model
 {
@@ -24,6 +25,7 @@ class Participant extends Model
             'is_player' => 'boolean',
             'is_personil' => 'boolean',
             'is_captain' => 'boolean',
+            'is_co_captain' => 'boolean',
         ];
     }
 
@@ -33,5 +35,18 @@ class Participant extends Model
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function leadershipLabel(): ?string
+    {
+        if ($this->is_captain) {
+            return 'Kapten';
+        }
+
+        if ($this->is_co_captain) {
+            return 'Co-Kapten';
+        }
+
+        return null;
     }
 }

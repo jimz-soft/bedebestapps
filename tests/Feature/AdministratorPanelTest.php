@@ -136,12 +136,13 @@ class AdministratorPanelTest extends TestCase
         $this->actingAs($admin)->post(route('panitia.participants.store'), [
             'team_id' => $teams[0]->id,
             'name' => 'Andika Pratama',
-            'is_captain' => '1',
+            'leadership' => 'captain',
         ])->assertRedirect();
 
         $this->assertDatabaseHas('participants', [
             'name' => 'Andika Pratama',
             'is_captain' => 1,
+            'is_co_captain' => 0,
         ]);
 
         $this->actingAs($admin)->put(route('panitia.scores.update', $match), [
@@ -377,7 +378,7 @@ class AdministratorPanelTest extends TestCase
         $this->actingAs($admin)->post(route('panitia.participants.store'), [
             'team_id' => $team->id,
             'name' => 'Kapten Achilles',
-            'is_captain' => '1',
+            'leadership' => 'captain',
         ]);
 
         $this->actingAs($admin)->from(route('panitia.grup.index'))
@@ -400,11 +401,12 @@ class AdministratorPanelTest extends TestCase
         $this->actingAs($admin)->post(route('panitia.participants.store'), [
             'team_id' => $team->id,
             'name' => 'Andika Pratama',
-            'is_captain' => '1',
+            'leadership' => 'captain',
         ]);
         $this->actingAs($admin)->post(route('panitia.participants.store'), [
             'team_id' => $team->id,
             'name' => 'Budi Santoso',
+            'leadership' => 'co_captain',
         ]);
 
         $this->actingAs($admin)->post(route('panitia.matches.store'), [
@@ -725,5 +727,45 @@ class AdministratorPanelTest extends TestCase
             'team_id' => $team->id,
             'name' => 'Eko Saputra',
         ]);
+    }
+
+    public function test_administrator_can_assign_one_captain_and_one_co_captain_per_team(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        $admin = User::query()->where('username', 'panitia')->firstOrFail();
+        $team = Team::query()->where('slug', 'achilles')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('panitia.participants.store'), [
+            'team_id' => $team->id,
+            'name' => 'Andika Pratama',
+            'leadership' => 'captain',
+        ])->assertRedirect();
+
+        $this->actingAs($admin)->post(route('panitia.participants.store'), [
+            'team_id' => $team->id,
+            'name' => 'Sari Wulandari',
+            'leadership' => 'co_captain',
+        ])->assertRedirect();
+
+        $this->actingAs($admin)->from(route('panitia.participants.index', ['team_id' => $team->id]))
+            ->post(route('panitia.participants.store'), [
+                'team_id' => $team->id,
+                'name' => 'Budi Santoso',
+                'leadership' => 'captain',
+            ])
+            ->assertRedirect(route('panitia.participants.index', ['team_id' => $team->id]))
+            ->assertSessionHasErrors('leadership');
+
+        $this->actingAs($admin)->from(route('panitia.participants.index', ['team_id' => $team->id]))
+            ->post(route('panitia.participants.store'), [
+                'team_id' => $team->id,
+                'name' => 'Citra Lestari',
+                'leadership' => 'co_captain',
+            ])
+            ->assertRedirect(route('panitia.participants.index', ['team_id' => $team->id]))
+            ->assertSessionHasErrors('leadership');
+
+        $this->assertSame(1, Participant::query()->where('team_id', $team->id)->where('is_captain', true)->count());
+        $this->assertSame(1, Participant::query()->where('team_id', $team->id)->where('is_co_captain', true)->count());
     }
 }

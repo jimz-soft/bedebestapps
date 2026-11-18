@@ -20,6 +20,7 @@ class TeamsController extends Controller
             ->withCount([
                 'participants',
                 'participants as captains_count' => fn ($query) => $query->where('is_captain', true),
+                'participants as co_captains_count' => fn ($query) => $query->where('is_co_captain', true),
             ])
             ->orderBy('sort_order')
             ->get()
@@ -34,6 +35,7 @@ class TeamsController extends Controller
                     'total' => (int) ($row['total'] ?? 0),
                     'peserta' => (int) $team->participants_count,
                     'kapten' => (int) $team->captains_count,
+                    'co_kapten' => (int) $team->co_captains_count,
                 ];
             });
 
@@ -47,7 +49,7 @@ class TeamsController extends Controller
     public function show(Team $team, LiveBoard $board): View
     {
         $team->load([
-            'participants' => fn ($query) => $query->orderByDesc('is_captain')->orderBy('name'),
+            'participants' => fn ($query) => $query->orderByDesc('is_captain')->orderByDesc('is_co_captain')->orderBy('name'),
         ]);
 
         $row = $this->rankedStandings($board)->get($team->id);
@@ -70,7 +72,7 @@ class TeamsController extends Controller
                 ->whereIn('match_id', $rosterMatches->modelKeys())
                 ->get()
                 ->sortBy(fn (MatchRoster $item) => [
-                    $item->participant?->is_captain ? 0 : 1,
+                    $item->participant?->is_captain ? 0 : ($item->participant?->is_co_captain ? 1 : 2),
                     strtolower((string) $item->participant?->name),
                 ])
                 ->groupBy(fn (MatchRoster $item) => (int) $item->match_id);
@@ -90,7 +92,8 @@ class TeamsController extends Controller
             'poin_games' => (int) ($row['poin_games'] ?? 0),
             'poin_personil' => (int) ($row['poin_personil'] ?? 0),
             'total' => (int) ($row['total'] ?? 0),
-            'captains' => $team->participants->where('is_captain', true)->values(),
+            'captain' => $team->participants->firstWhere('is_captain', true),
+            'coCaptain' => $team->participants->firstWhere('is_co_captain', true),
             'rosterMatches' => $rosterMatches,
             'rosters' => $rosters,
             'matches' => $matches,

@@ -23,8 +23,8 @@
             @forelse ($team->participants as $participant)
                 <li class="flex items-center justify-between bg-black/20 rounded-xl px-4 py-3">
                     <span>{{ $participant->name }}</span>
-                    @if ($participant->is_captain)
-                        <span class="text-[11px] text-brand-cyan">Kapten</span>
+                    @if ($participant->leadershipLabel())
+                        <span class="text-[11px] text-brand-cyan">{{ $participant->leadershipLabel() }}</span>
                     @endif
                 </li>
             @empty

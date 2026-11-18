@@ -49,7 +49,7 @@ class PicPanelTest extends TestCase
         $this->actingAs($admin)->post(route('panitia.participants.store'), [
             'team_id' => $achilles->id,
             'name' => 'Andika Pratama',
-            'is_captain' => '1',
+            'leadership' => 'captain',
         ]);
         $this->actingAs($admin)->post(route('panitia.participants.store'), [
             'team_id' => $odysseus->id,

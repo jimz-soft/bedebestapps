@@ -19,9 +19,13 @@
             <x-team-avatar :team="$team" size="w-28 h-28" class="bg-brand-dark shadow-[0_0_0_4px_#12121c]" />
             <div class="text-center md:text-left pb-1">
                 <h1 class="font-gaming text-4xl text-brand-gold">{{ strtoupper($team->name) }}</h1>
-                <p class="text-gray-400 mt-2">Peringkat <span class="font-gaming {{ $rankColor }}">#{{ $rank }}</span> · {{ $team->participants->count() }} peserta · {{ $captains->count() }} kapten</p>
-                @if ($captains->isNotEmpty())
-                    <p class="text-sm text-gray-500 mt-1">Kapten: {{ $captains->pluck('name')->join(' · ') }}</p>
+                <p class="text-gray-400 mt-2">Peringkat <span class="font-gaming {{ $rankColor }}">#{{ $rank }}</span> · {{ $team->participants->count() }} peserta · {{ $captain ? 1 : 0 }} kapten · {{ $coCaptain ? 1 : 0 }} co-kapten</p>
+                @if ($captain || $coCaptain)
+                    <p class="text-sm text-gray-500 mt-1">
+                        @if ($captain)Kapten: {{ $captain->name }}@endif
+                        @if ($captain && $coCaptain) · @endif
+                        @if ($coCaptain)Co-Kapten: {{ $coCaptain->name }}@endif
+                    </p>
                 @endif
                 <div class="flex gap-6 mt-4 justify-center md:justify-start text-sm">
                     <div>
@@ -47,8 +51,8 @@
         @forelse ($team->participants as $participant)
             <li class="px-5 py-3 flex flex-wrap items-center justify-between gap-2">
                 <span>{{ $participant->name }}</span>
-                @if ($participant->is_captain)
-                    <span class="text-[10px] uppercase px-2 py-0.5 rounded border border-brand-purple/50 text-brand-purple">Kapten</span>
+                @if ($participant->leadershipLabel())
+                    <span class="text-[10px] uppercase px-2 py-0.5 rounded border border-brand-purple/50 text-brand-purple">{{ $participant->leadershipLabel() }}</span>
                 @endif
             </li>
         @empty
@@ -67,7 +71,7 @@
                     <p class="text-[11px] text-gray-500 mb-3">{{ $rosterMatch->round_label }}@if ($rosterMatch->matchTeams->isNotEmpty()) · {{ $rosterMatch->matchTeams->pluck('team.name')->filter()->join(' vs ') }}@endif</p>
                     <p class="text-sm text-gray-300">
                         @forelse ($entries as $entry)
-                            {{ $entry->participant?->name }}@if ($entry->participant?->is_captain) <span class="text-[10px] text-brand-purple">K</span>@endif @if (! $loop->last)·@endif
+                            {{ $entry->participant?->name }}@if ($entry->participant?->is_captain) <span class="text-[10px] text-brand-purple">K</span>@elseif ($entry->participant?->is_co_captain) <span class="text-[10px] text-brand-cyan">CK</span>@endif @if (! $loop->last)·@endif
                         @empty
                             Belum dipilih
                         @endforelse

@@ -79,6 +79,7 @@ class PublicScheduleTest extends TestCase
             ->assertSee('HERCULES')
             ->assertSee('PERSEUS')
             ->assertSee('18:00')
+            ->assertSee('21 Nov · Aula utama')
             ->assertSee('MUKBANG')
             ->assertSee('AULA UTAMA')
             ->assertSee('Lomba bersama');
