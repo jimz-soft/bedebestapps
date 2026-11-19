@@ -25,6 +25,30 @@
     .game-rules em,
     .game-rules i { color: #efe9d8; }
     .game-rules a { color: #22d3ee; text-decoration: underline; text-underline-offset: 2px; }
+    .game-rules table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: .85rem 0 1rem;
+        font-size: .95rem;
+        overflow: hidden;
+        border: 1px solid rgba(228,199,107,.35);
+        border-radius: .75rem;
+    }
+    .game-rules thead th {
+        background: rgba(228,199,107,.16);
+        color: #e4c76b;
+        font-weight: 700;
+        text-align: left;
+    }
+    .game-rules th,
+    .game-rules td {
+        padding: .65rem .85rem;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+        vertical-align: top;
+    }
+    .game-rules tbody tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+    .game-rules tbody tr:last-child th,
+    .game-rules tbody tr:last-child td { border-bottom: 0; }
     .game-rules-wrap { position: relative; max-width: 42rem; }
     .game-rules-wrap[data-collapsed="true"] .game-rules {
         max-height: 5.5rem;

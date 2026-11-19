@@ -83,10 +83,13 @@
 <script>
     tinymce.init({
         selector: '#rules_html',
-        height: 280,
+        height: 320,
         menubar: false,
-        plugins: 'lists link',
-        toolbar: 'bold italic underline | bullist numlist | link | removeformat',
+        plugins: 'lists link table',
+        toolbar: 'bold italic underline | bullist numlist | table | link | removeformat',
+        table_toolbar: 'tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
+        table_default_attributes: { border: '0' },
+        table_default_styles: { width: '100%' },
         skin: 'oxide-dark',
         content_css: 'dark',
         branding: false

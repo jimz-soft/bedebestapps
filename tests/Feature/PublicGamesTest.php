@@ -53,6 +53,23 @@ class PublicGamesTest extends TestCase
             ->assertSee('list-style-type: decimal', false);
     }
 
+    public function test_public_games_page_keeps_point_tables(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        $game = Game::query()->where('slug', 'mini-soccer')->firstOrFail();
+        $game->update([
+            'rules_html' => '<table><thead><tr><th>Ranking</th><th>Poin</th></tr></thead><tbody><tr><td>Juara 1</td><td>10</td></tr><tr><td>Juara 2</td><td>7</td></tr></tbody></table>',
+        ]);
+
+        $this->get(route('games'))
+            ->assertOk()
+            ->assertSee('<table>', false)
+            ->assertSee('<th>', false)
+            ->assertSee('Ranking')
+            ->assertSee('Juara 1')
+            ->assertSee('border-collapse: collapse', false);
+    }
+
     public function test_inactive_games_are_hidden_and_banners_render(): void
     {
         $this->seed(DatabaseSeeder::class);

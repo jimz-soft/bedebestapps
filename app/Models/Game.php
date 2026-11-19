@@ -117,7 +117,10 @@ class Game extends Model
             return null;
         }
 
-        $html = strip_tags($this->rules_html, '<p><br><ul><ol><li><strong><em><b><i><a><u><span>');
+        $html = strip_tags(
+            $this->rules_html,
+            '<p><br><ul><ol><li><strong><em><b><i><a><u><span><table><thead><tbody><tfoot><tr><th><td>',
+        );
 
         return $html === '' ? null : $html;
     }
