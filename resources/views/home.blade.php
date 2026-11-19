@@ -109,9 +109,12 @@
                         default => 'text-white',
                     };
                 @endphp
-                <a href="{{ route('leaderboard') }}" class="grid grid-cols-12 items-center px-5 py-4 {{ $loop->even ? 'bg-white/[0.03]' : '' }}">
+                <a href="{{ route('leaderboard') }}" class="grid grid-cols-12 items-center gap-2 px-5 py-4 {{ $loop->even ? 'bg-white/[0.03]' : '' }}">
                     <span class="col-span-1 font-gaming {{ $rankColor }}">{{ $loop->iteration }}</span>
-                    <span class="col-span-7 font-gaming">{{ $row['team']->name }}</span>
+                    <span class="col-span-7 min-w-0 flex items-center gap-3">
+                        <x-team-avatar :team="$row['team']" size="w-9 h-9" />
+                        <span class="font-gaming truncate">{{ $row['team']->name }}</span>
+                    </span>
                     <span class="col-span-4 text-right font-gaming">{{ $row['total'] }}</span>
                 </a>
             @endforeach
@@ -205,12 +208,13 @@
     const standingsBox = document.getElementById('live-standings');
     const rankColor = ['text-brand-gold', 'text-[#c0c7d1]', 'text-[#cd7f32]', 'text-white'];
 
-    function avatarHtml(side) {
+    function avatarHtml(side, size) {
+        const box = size || 'w-12 h-12';
         const border = 'style="border-color:' + side.color + '"';
         if (side.logo) {
-            return '<img src="' + side.logo + '" alt="' + side.name + '" class="w-12 h-12 rounded-full border-2 object-cover shrink-0" ' + border + '>';
+            return '<img src="' + side.logo + '" alt="' + side.name + '" class="' + box + ' rounded-full border-2 object-contain bg-brand-dark p-0.5 shrink-0" ' + border + '>';
         }
-        return '<span class="w-12 h-12 rounded-full border-2 inline-flex items-center justify-center font-gaming text-[11px] shrink-0" ' + border + '>' + side.code + '</span>';
+        return '<span class="' + box + ' rounded-full border-2 inline-flex items-center justify-center font-gaming text-[10px] bg-brand-dark shrink-0" ' + border + '>' + side.code + '</span>';
     }
 
     function sideHtml(side, reverse) {
@@ -245,9 +249,12 @@
         if (!standingsBox || !rows) return;
         standingsBox.innerHTML = rows.map(function (row, index) {
             const even = index % 2 === 1 ? ' bg-white/[0.03]' : '';
-            return '<a href="{{ route('leaderboard') }}" class="grid grid-cols-12 items-center px-5 py-4' + even + '">' +
+            return '<a href="{{ route('leaderboard') }}" class="grid grid-cols-12 items-center gap-2 px-5 py-4' + even + '">' +
                 '<span class="col-span-1 font-gaming ' + (rankColor[index] || 'text-white') + '">' + (index + 1) + '</span>' +
-                '<span class="col-span-7 font-gaming">' + row.name + '</span>' +
+                '<span class="col-span-7 min-w-0 flex items-center gap-3">' +
+                    avatarHtml(row, 'w-9 h-9') +
+                    '<span class="font-gaming truncate">' + row.name + '</span>' +
+                '</span>' +
                 '<span class="col-span-4 text-right font-gaming">' + row.total + '</span>' +
                 '</a>';
         }).join('');

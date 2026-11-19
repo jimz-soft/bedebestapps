@@ -73,6 +73,9 @@ class LiveBoard
             ],
             'standings' => $this->standings()->map(fn (array $row): array => [
                 'name' => $row['team']->name,
+                'code' => $row['team']->code,
+                'color' => $row['team']->color,
+                'logo' => $row['team']->logoUrl(),
                 'total' => $row['total'],
             ])->take(4)->values()->all(),
         ];
